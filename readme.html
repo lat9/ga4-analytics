@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GA4 Analytics for Zen Cart 1.5.7 and Later</title>
+<style type="text/css">
+a, a:active, 
+a:visited { 
+    color: #006666; 
+}
+a:hover { 
+    color:#00CC99; 
+}
+body, 
+p, 
+h1, 
+h2, 
+h3, 
+h4, 
+li, 
+td { 
+    font-family: Verdana, AvantGarde, Tahoma, Arial, sans-serif; 
+    font-size: 10pt; 
+    color: black; 
+    padding: 0px; 
+    margin: 20px; 
+}
+pre { 
+    margin: 20px; 
+}
+H1, 
+H2, 
+H3, 
+H4 { 
+    font-weight: bold 
+}
+h1 { 
+    font-size: 20px; 
+}
+h2 { 
+    font-size: 16px; 
+    border-top: 1px solid black;
+    padding-top: 5px;
+}
+ol li, 
+ul li { 
+    margin: 5px 0; 
+}
+.corefile, 
+.impt { 
+    color: red; 
+}
+.added { 
+    color: blue; 
+}
+img { 
+    margin-left: 20px; 
+    max-width: 95%; 
+}
+.removed { 
+    text-decoration: line-through; 
+}
+.smaller {
+    font-size: smaller;
+}
+</style>
+</head>
+
+<body>
+    <h1>GA4 Analytics for Zen Cart v1.5.7 and later, including v1.5.8</h1>
+    <h3>Version 1.0.0</h3>
+    <p>Current Support Thread at Zen Cart Forums: <a href="javascript:void();" target="_blank">TBD</a></p>
+    <p>Zen Cart Download Link: <a href="javascript:void();" target="_blank">TBD</a></p>
+    <p>GitHub repository: <a href="https://github.com/lat9/ga4-analytics" target="_blank">https://github.com/lat9/ga4-analytics</a>.</p>
+
+    <p><b>IMPORTANT NOTICE:</b></p>
+    <hr>
+    <p>This plugin is a standalone solution for Google Analytics meant to replace any other Zen Cart plugins you might use right now. Do <b>not</b> use any other Google Analytics plugins (like "Simple Google Analytics or Easy Google Analytics") together with this plugin.
+    <ul>
+        <li>Make sure that you uninstall any other Google Analytics plugins before you install this plugin.</li>
+        <li>Make sure that you did <b>not</b> add some Google tracking scripts anywhere manually in your Zen Cart files.</li>
+        <li>Make sure that you do <b>not</b> add additional Adwords conversion tracking codes/scripts anywhere in your store.</li>
+        <li>If you are using Adwords campaigns make sure that your Google Analytics account is linked with your Google Adwords account.</li>
+    </ul>
+
+    <h2>Credits</h2>
+    <p>All credits to RodG for creating and publishing this plugin in the Zen Cart forums.</p>
+
+    <h2>Purpose</h2>
+    <p>This module utilises the latest (as of May 2015) Google Enhanced Analytics Ecommerce API. It records all of your store sales data for viewing from your Google Analytics Account (which must be created before installing this module).</p>
+    <ul>
+        <li>The sales data is separated into product revenue, taxes and postage.</li>
+        <li>The product category is also recorded (up to 5 levels).</li>
+        <li>It will record the 1st product variant name (if available),</li>
+        <li>Records the checkout steps taken by the customers (and dropoffs for each step),</li>
+        <li>As well as this, the module records the normal 'page views', as well as other selected 'events', such as add/delete from cart.</li>
+        <li>In fact anything that can be processed by the zen-cart NOTIFIERS can be recorded and sent to Google simply by adding the notifier to the array in the class file.</li>
+        <li>Easy to install.</li>
+        <li>Doesn't overwrite or modify any existing files.</li>
+        <li>All that is needed for full functionality is your Google Analytics TrackingID "UA-XXXXXX.X" (which is why you need a Google Analytics Account before installing this module). If you already have a tracking ID you don't need to create a new one.</li>
+    </ul>
+
+    <h2>Installation and Upgrade</h2>
+    <ol>
+        <li>Unzip this archive</li>
+        <li>Edit the file /includes/extra_datafiles/ec_analytics.php to include your UA-XXXXXXXX-X userID (from Google Analytics Website).</li>
+        <li>Rename the folder '/includes/templates/YOUR_TEMPLATE' so that it matches the name of your template/theme.</li>
+        <li>Copy all four files from the /includes/ folder to your store keeping the same folder/directory structure as per the extracted files.</li>
+    </ol>
+
+    <h2>Configuration</h2>
+    <p>If you haven't already done so, you should then log into the Analytics website.  Navigate to admin->view->Ecommerce Settings and tick the boxes to 'Enable Ecommerce'. Set the 'Enable Enhanced Ecommerce Reporting' to 'On'.</p>
+    <p>Optionally set up the 'Checkout Labelling' Funnel Steps. By default (at time of writing this), the module reports:</p>
+    <ol>
+        <li>Start Login</li>
+        <li>Login Success</li>
+        <li>Start Shipping (Std install) or Checkout Begin (FEC/COWOA)</li>
+        <li>Start Payment</li>
+        <li>Checkout Confirmation</li>
+    </ol>
+    <p>There is also a 'Checkout Success' being reported, but this is NOT logged as being a 'Checkout Step' as it is recorded/reported as being a 'completed transaction' in the checkout steps report page instead.</p>
+    <p><b>NOTE:</b> Not all checkout steps are recorded at all times.  This is because not everyone follows the same checkout procedure(s) and the steps are different than the zencart defaults if you happen to be using The FEC or COWOA (or other checkout) mods.</p>
+
+    <p>Should you wish to add/remove any checkout steps for your particular site this is easily achieved by editing the file <code>/includes/classes/observers/class.ec_analytics.php</code>.  The checkout steps are clearly identified.</p>
+ 
+    <p>Should you wish to track other zen-cart 'NOTIFY' events, this is easily achieved by editing the file <code>/includes/classes/observers/class.ec_analytics.php</code>. You may add any valid NOTIFIER to the array at the beginning of the file.  No other changes needed.</p>
+
+    <p><em>Tip#1:</em> As none of my customers use affliation sales (and ZenCart, by default isn't set up for it) I have opted to populate this data field (affiliation) with the method of payment instead.</p>
+
+    <p><em>Tip#2:</em> The customerID (from the store) is recorded in Google analytics as 'Dimension1'. You can give this a more meaningful name from the GA admin page - > Property - > Custom Definitions -> Custom Dimensions. (I call mine simple 'CustomerID').</p>
+
+    <p><b>IMPORTANT:</b> Before accumulating too much data you should carefully consider the checkout steps recordings and make changes if needed. The data associated with these steps are stored by Google by step number (not name), so if you add/remove/re-order this 'funnel' the existing data recordings remain unchanged, so if (for example) you remove the 'Start Login' (step#1), the 'Login Success' will become the new step# and all previously stored data for 'Start Login' will now appear in the reports as 'Login Success'. If you add a step before an existing step, all of the 'Checkout Confirmation' recordings will 'dissapear' as this will now be the 6th 'step' that has no previously recorded data. Google analytics doesn't provide any means of modifying existing data (other than deleting the site and re-adding it).</p>
+
+    <h2>Version History</h2>
+    <p>These sections identify the GA4 Analytics changes as well as the change-history associated with the EC Analytics plugin, on which it's based.</p>
+    <h3>EC Analytics Version History (Legacy)</h3>
+    <ul>
+        <li>v1.2.2, 2017-12-12 (DrByte, webchills)<ul>
+            <li>Updated code for PHP7 compatibility.</li>
+        </ul></li>
+        <li>v1.2.1, 2017-12-11 (webchills)<ul>
+            <li>Fix typo preventing the brand name to be recorded see: https://www.zen-cart.com/showthread.php?217086-Google-Ecommerce-Tracking&p=1339193#post1339193.</li>
+        </ul></li>
+        <li>v1.2.0, 2017-05-18 (webchills)<ul>
+            <li>Fixes suggested in the following thread integrated: https://www.zen-cart.com/showthread.php?217086-Google-Ecommerce-Tracking/.</li>
+            <li>Some unnecessary code removed.</li>
+            <li>readme updated</li>
+        </ul></li>
+        <li>v1.0.1, 2015-05-13 (RodG)<ul>
+            <li>Initial release.</li>
+        </ul></li>
+    </ul>
+
+</body>
+</html>
