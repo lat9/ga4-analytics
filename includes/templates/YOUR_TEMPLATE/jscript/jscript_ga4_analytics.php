@@ -9,7 +9,8 @@
  */
 
 if ((!defined('GOOGLE_UA') || GOOGLE_UA === "UA-XXXXXXXX-X")) { 
-        echo '<script>alert("The Google Analytics trackingID is not yet defined in\n /includes/extra_datafiles/ec_analytics.php")</script>';
+    echo '<script>alert("The Google Analytics trackingID is not yet defined in\n /includes/extra_datafiles/ec_analytics.php")</script>';
+    return;
 } else {
     $trackingID = GOOGLE_UA;
 }

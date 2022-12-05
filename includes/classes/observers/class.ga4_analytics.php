@@ -7,7 +7,7 @@
  * @license http://www.zen-cart-pro.at/license/2_0.txt GNU Public License V2.0
  * @version $Id: class.ec_analytics.php 2017-12-11  DrByte $
  */
-class ec_analytics extends base
+class ga4_analytics extends base
 {
     function __construct() {
         global $zco_notifier;
@@ -178,7 +178,7 @@ class ec_analytics extends base
                 $id = $this->getID();
                 if ($id) {
                     $brand = zen_get_products_manufacturers_name($id);
-                    $brandTxt = ($brand != '') ? $brand : 'n/a' 
+                    $brandTxt = ($brand != '') ? $brand : 'n/a';
 
                     $products_name = zen_get_products_name($id);
                     $analytics['item'] = [
