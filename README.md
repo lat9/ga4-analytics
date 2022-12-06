@@ -5,3 +5,4 @@ Helpful links:
 - https://developers.google.com/analytics/devguides/collection/ga4/ecommerce?client_type=gtm
 - https://support.google.com/analytics/answer/9973999?hl=en&ref_topic=12154439,12153943,2986333,&visit_id=638058383718374091-3991255237&rd=1
 - Enabling `DebugView`: https://support.google.com/analytics/answer/7201382
+- On-line sales events: https://support.google.com/analytics/answer/9267735#online-sales
