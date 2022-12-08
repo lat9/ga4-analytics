@@ -172,7 +172,7 @@ class ga4_analytics extends base
             //
             case 'NOTIFY_GA4_CART_ACTION_STARTS':
                 $this->currentCartSaved = true;
-                $this->currentCart = $_SESSION['cart']->get_products();
+                $this->currentCart = $this->cartGetProducts();
                 break;
 
             // -----
@@ -346,7 +346,7 @@ class ga4_analytics extends base
             // add_to_cart event.
             //
             case 'NOTIFIER_CART_RESTORE_CONTENTS_START':
-                $this->currentCart = $_SESSION['cart']->get_products();
+                $this->currentCart = $this->cartGetProducts();
                 break;
             case 'NOTIFIER_CART_RESTORE_CONTENTS_END':
                 $added_items = $this->determineProductsAddedDuringRestore();
@@ -432,7 +432,9 @@ class ga4_analytics extends base
                     ];
 
                 // -----
-                // Otherwise, this product was newly-added to the cart.
+                // Otherwise, this product was newly-added to the cart; its information will be
+                // pulled from the current cart and an 'add_to_cart' event will be fired.
+                //
                 } else {
                     $item = $this->getItemsInCart($uprid, true);
                     if (empty($item)) {
@@ -488,7 +490,7 @@ class ga4_analytics extends base
                 break;
 
             case 'NOTIFY_HEADER_END_SHOPPING_CART':
-                $this->currentCart = $_SESSION['cart']->get_products();
+                $this->currentCart = $this->cartGetProducts();
                 if ($this->currentCart === false) {
                     break;
                 }
@@ -619,6 +621,23 @@ class ga4_analytics extends base
     protected function getUprid($prid, $params)
     {
         return (string)zen_get_uprid($prid, $params);
+    }
+
+    // -----
+    // Ditto to fix-up the uprid values returned by the cart's get_products method, so that
+    // exactly-equal-to can be used when trying to find existing products in the cart for the
+    // cart-related actions.
+    //
+    protected function cartGetProducts()
+    {
+        $cart_products = $_SESSION['cart']->get_products();
+        if ($cart_products === false) {
+            return false;
+        }
+        for ($i = 0, $n = count($cart_products); $i < $n; $i++) {
+            $cart_products[$i]['id'] = (string)$cart_products[$i]['id'];
+        }
+        return $cart_products;
     }
 
     protected function formatCurrency($value)
@@ -887,8 +906,7 @@ class ga4_analytics extends base
     //
     protected function getItemsInCart($item_uprid = false, $current_cart_override = false)
     {
-        $cart_contents = ($current_cart_override === false) ? $this->currentCart : $_SESSION['cart']->get_products();
-        trigger_error("$item_uprid, override ($current_cart_override): " . json_encode($cart_contents), E_USER_NOTICE);
+        $cart_contents = ($current_cart_override === false) ? $this->currentCart : $this->cartGetProducts();
         if ($cart_contents === false) {
             return false;
         }
@@ -900,7 +918,7 @@ class ga4_analytics extends base
                     continue;
                 }
                 if ($current_cart_override !== false) {
-                    $this->currentCart[$item_uprid] = $cart_item;
+                    $this->setItemCurrentCartQuantity($uprid, $cart_item['quantity']);
                 }
             }
             $items[] = $this->createItemFromCartItem($cart_item);
@@ -908,6 +926,9 @@ class ga4_analytics extends base
         return $items;
     }
 
+    // -----
+    // Create a GA4 item from a shopping_cart class item.
+    //
     protected function createItemFromCartItem($cart_item)
     {
         $item = [
@@ -928,24 +949,24 @@ class ga4_analytics extends base
         // Gather up any variants for the current product, noting that any text/file attributes are not
         // included in the list!
         //
-        $variant_options = [];
         if (isset($cart_item['attributes']) && is_array($cart_item['attributes'])) {
+            $variant_options = [];
             foreach ($cart_item['attributes'] as $options_id => $values_id) {
                 if (0 === (int)$values_id) {
                     continue;
                 }
                 $variant_options[] = zen_options_name($options_id) . ': ' . zen_values_name($values_id);
             }
-        }
-        if (count($variant_options) !== 0) {
-            $item['item_variant'] = implode(GA4_ANALYTICS_VARIANT_SEPARATOR, $variant_options);
+            if (count($variant_options) !== 0) {
+                $item['item_variant'] = implode(GA4_ANALYTICS_VARIANT_SEPARATOR, $variant_options);
+            }
         }
         return $item;
     }
 
     protected function determineProductsAddedDuringRestore()
     {
-        $restored_cart = $_SESSION['cart']->get_products();
+        $restored_cart = $this->cartGetProducts();
         if ($restored_cart === false) {
             return false;
         }
