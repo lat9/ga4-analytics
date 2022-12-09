@@ -433,7 +433,7 @@ class ga4_analytics extends base
 
                 // -----
                 // Otherwise, this product was newly-added to the cart; its information will be
-                // pulled from the current cart and an 'add_to_cart' event will be fired.
+                // pulled from the current cart-item and an 'add_to_cart' event will be fired.
                 //
                 } else {
                     $item = $this->getItemsInCart($uprid, true);
@@ -444,7 +444,7 @@ class ga4_analytics extends base
                         'event' => 'add_to_cart',
                         'parameters' => [
                             'currency' => $_SESSION['currency'],
-                            'value' => $this->formatCurrency($this->getItemCurrentCartFinalPrice($uprid) * $qty),
+                            'value' => $this->formatCurrency($item['price'] * $item['quantity']),
                             'items' => $item,
                         ]
                     ];
@@ -918,7 +918,7 @@ class ga4_analytics extends base
                     continue;
                 }
                 if ($current_cart_override !== false) {
-                    $this->setItemCurrentCartQuantity($uprid, $cart_item['quantity']);
+                    $this->setItemCurrentCartQuantity($item_uprid, $cart_item['quantity']);
                 }
             }
             $items[] = $this->createItemFromCartItem($cart_item);

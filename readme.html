@@ -68,7 +68,7 @@ img {
 </head>
 
 <body>
-    <h1>GA4 Analytics for Zen Cart v1.5.7 and later, including v1.5.8</h1>
+    <h1>GA4 Analytics for Zen Cart v1.5.6b and later, including v1.5.8</h1>
     <h3>Version 1.0.0</h3>
     <p>Current Support Thread at Zen Cart Forums: <a href="javascript:void();" target="_blank">TBD</a></p>
     <p>Zen Cart Download Link: <a href="javascript:void();" target="_blank">TBD</a></p>
@@ -102,6 +102,26 @@ img {
     </ul>
 
     <h2>Installation and Upgrade</h2>
+    <p><b>Before you start &hellip;</b></p>
+    <ol>
+        <li>Edit your current template's version of <code>/common/html_header.php</code> and add a notification that <em>GA4 Analytics</em> requires to insert the load of the <code>gtag.js</code> module, right after the &lt;head&gt; tag:<pre>
+  &lt;head&gt;
+&lt;?php
+// -----
+// Provide a notification that the <head> tag has been rendered for the current page.
+//
+$zco_notifier-&gt;notify('NOTIFY_HTML_HEAD_TAG_START', $current_page_base);
+?&gt;
+        </pre></li>
+        <li>Ensure that your current template's version of <code>/common/tpl_main_page.php</code> contains the following notification, prior to the &lt;/body&gt; tag.  It's OK if that notification is present in the page's &quot;mainWrapper&quot; <code>div</code>:<pre>
+&lt;?php /* add any end-of-page code via an observer class */
+$zco_notifier-&gt;notify('NOTIFY_FOOTER_END', $current_page);
+?&gt;
+        </pre></li>
+        <li><b>If your store runs on Zen Cart 1.5.6b or 1.5.6c</b>, you'll need to edit your version of <code>/includes/classes/shopping_cart.php</code>.  Find the <b>NOTIFIER_CART_ADD_CART_END</b> notification and change it to add the parameters that were added in Zen Cart 1.5.7:<pre>
+$this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $attributes, $notify</b>);
+        </pre></li>
+    </ol>
     <ol>
         <li>Unzip this archive</li>
         <li>Edit the file /includes/extra_datafiles/ec_analytics.php to include your UA-XXXXXXXX-X userID (from Google Analytics Website).</li>
