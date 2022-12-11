@@ -6,6 +6,7 @@
 // This script is loaded based on a notification that a page's <head> tag has been rendered by
 // /includes/classes/observers/class.ga4_analytics.php, so long as the GA4 Analytics is currently
 // enabled.
+//
 ?>
 <!-- Google tag (gtag.js) -->
  <script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo $ga4_measurement_id; ?>"></script>

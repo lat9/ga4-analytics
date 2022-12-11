@@ -111,12 +111,8 @@ class ga4_analytics extends base
                 /* login/signup events */
                 'NOTIFY_LOGIN_SUCCESS',
                 'NOTIFY_LOGIN_SUCCESS_VIA_CREATE_ACCOUNT',
-                'NOTIFY_LOGIN_SUCCESS_VIA_NO_ACCOUNT',
 
                 /* purchase-related events */
-                'NOTIFY_HEADER_END_CHECKOUT_SHIPPING',
-                'NOTIFY_HEADER_END_CHECKOUT_PAYMENT',
-                'NOTIFY_HEADER_END_CHECKOUT_CONFIRMATION',
                 'NOTIFY_HEADER_END_CHECKOUT_SUCCESS',
 
                 /* search event */
@@ -200,26 +196,6 @@ class ga4_analytics extends base
                 }
 
                 // -----
-                // The 'specials' page has always been (er) special.  It's got no real
-                // notifiers of its own to grab onto, so wait until the footer's being
-                // rendered to gather its listing elements.
-                //
-                if ($current_page_base === FILENAME_SPECIALS) {
-                    global $specials, $listing;
-                    $products = isset($listing) ? $listing : $specials;
-                    if (count($products) === 0) {
-                        break;
-                    }
-                    $_SESSION['ga4_analytics'][] = [
-                        'event' => 'view_item_list',
-                        'parameters' => [
-                            'item_list_name' => GA4_ANALYTICS_SPECIALS,
-                            'items' => $this->getListingItems($products),
-                        ]
-                    ];
-                }
-
-                // -----
                 // The attributes on a product's details page are rendered during the
                 // templating stage, so they're not available until this point.
                 //
@@ -269,6 +245,70 @@ class ga4_analytics extends base
                         'event' => 'view_item',
                         'parameters' => $item,
                     ];
+                } else {
+                    switch ($current_page_base) {
+                        case FILENAME_CHECKOUT_SHIPPING:
+                            $_SESSION['ga4_analytics'][] = [
+                                'event' => 'begin_checkout',
+                                'parameters' => $this->getCheckoutParameters(),
+                            ];
+                            break;
+
+                        case FILENAME_CHECKOUT_PAYMENT:
+                            global $order;
+
+                            $checkout_parameters = $this->getCheckoutParameters();
+                            $came_from_confirmation_page = (strpos($_SERVER['HTTP_REFERER'], zen_href_link(FILENAME_CHECKOUT_CONFIRMATION, '', 'SSL')) === 0);
+                            if ($_SESSION['cart']->get_content_type() === 'virtual' && $came_from_confirmation_page === false) {
+                                $_SESSION['ga4_analytics'][] = [
+                                    'event' => 'begin_checkout',
+                                    'parameters' => $checkout_parameters,
+                                ];
+                            }
+                            if (isset($order->info['shipping_method']) && $came_from_confirmation_page === false) {
+                                $checkout_parameters['shipping_tier'] = $order->info['shipping_method'];
+                                $_SESSION['ga4_analytics'][] = [
+                                    'event' => 'add_shipping_info',
+                                    'parameters' => $checkout_parameters,
+                                ];
+                            }
+                            break;
+
+                        case FILENAME_CHECKOUT_CONFIRMATION:
+                            if (strpos($_SERVER['HTTP_REFERER'], zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL')) === 0) {
+                                $checkout_parameters = $this->getCheckoutParameters();
+                                $checkout_parameters['payment_type'] = $_SESSION['payment'];
+                                $_SESSION['ga4_analytics'][] = [
+                                    'event' => 'add_payment_info',
+                                    'parameters' => $checkout_parameters,
+                                ];
+                            }
+                            break;
+
+                        // -----
+                        // The 'specials' page has always been (er) special.  It's got no real
+                        // notifiers of its own to grab onto, so wait until the footer's being
+                        // rendered to gather its listing elements.
+                        //
+                        case FILENAME_SPECIALS:
+                            global $specials, $listing;
+
+                            $products = isset($listing) ? $listing : $specials;
+                            if (count($products) === 0) {
+                                break;
+                            }
+                            $_SESSION['ga4_analytics'][] = [
+                                'event' => 'view_item_list',
+                                'parameters' => [
+                                    'item_list_name' => GA4_ANALYTICS_SPECIALS,
+                                    'items' => $this->getListingItems($products),
+                                ]
+                            ];
+                            break;
+
+                        default:
+                            break;
+                    }
                 }
 
                 require $template->get_template_dir('ga4_analytics_events_script.php', DIR_WS_TEMPLATE, $current_page_base, 'jscript') . '/ga4_analytics_events_script.php';
@@ -444,7 +484,7 @@ class ga4_analytics extends base
                         'event' => 'add_to_cart',
                         'parameters' => [
                             'currency' => $_SESSION['currency'],
-                            'value' => $this->formatCurrency($item['price'] * $item['quantity']),
+                            'value' => $this->formatCurrency($item[0]['price'] * $qty),
                             'items' => $item,
                         ]
                     ];
@@ -524,54 +564,6 @@ class ga4_analytics extends base
                     'parameters' => [
                         'method' => 'create-account',
                     ]
-                ];
-                break;
-
-            case 'NOTIFY_LOGIN_SUCCESS_VIA_NO_ACCOUNT':  //- COWOA or COWAA
-                $_SESSION['ga4_analytics'][] = [
-                    'event' => 'login',
-                    'parameters' => [
-                        'method' => 'no-account',
-                    ]
-                ];
-                break;
-
-            case 'NOTIFY_HEADER_END_CHECKOUT_SHIPPING':
-                $_SESSION['ga4_analytics'][] = [
-                    'event' => 'begin_checkout',
-                    'parameters' => $this->getCheckoutParameters(),
-                ];
-                break;
-
-            case 'NOTIFY_HEADER_END_CHECKOUT_PAYMENT':
-                global $order;
-
-                $checkout_parameters = $this->getCheckoutParameters();
-                $came_from_confirmation_page = (strpos($_SERVER['HTTP_REFERER'], FILENAME_CHECKOUT_CONFIRMATION) !== false);
-                if ($_SESSION['cart']->get_content_type() === 'virtual' && $came_from_confirmation_page === false) {
-                    $_SESSION['ga4_analytics'][] = [
-                        'event' => 'begin_checkout',
-                        'parameters' => $checkout_parameters,
-                    ];
-                }
-                if (isset($order->info['shipping_method']) && $came_from_confirmation_page === false) {
-                    $checkout_parameters['shipping_tier'] = $order->info['shipping_method'];
-                    $_SESSION['ga4_analytics'][] = [
-                        'event' => 'add_shipping_info',
-                        'parameters' => $checkout_parameters,
-                    ];
-                }
-                break;
-
-            case 'NOTIFY_HEADER_END_CHECKOUT_CONFIRMATION':
-                if (strpos($_SERVER['HTTP_REFERER'], FILENAME_CHECKOUT_PAYMENT) === false) {
-                    break;
-                }
-                $checkout_parameters = $this->getCheckoutParameters();
-                $checkout_parameters['payment_type'] = $_SESSION['payment'];
-                $_SESSION['ga4_analytics'][] = [
-                    'event' => 'add_payment_info',
-                    'parameters' => $checkout_parameters,
                 ];
                 break;
 
@@ -689,6 +681,7 @@ class ga4_analytics extends base
         ];
         $item_price = $this->getItemPrice($products_id);
         if ($item_price !== false) {
+            $item['currency'] = $_SESSION['currency'];
             $item['price'] = $this->formatCurrency($item_price);
         }
         if (!empty($product['products_model'])) {
@@ -776,6 +769,7 @@ class ga4_analytics extends base
             ];
             $item_price = $this->getItemPrice($products_id);
             if ($item_price !== false) {
+                $item['currency'] = $_SESSION['currency'];
                 $item['price'] = $this->formatCurrency($item_price);
             }
             if (!empty($product['products_model'])) {
@@ -826,6 +820,7 @@ class ga4_analytics extends base
         foreach ($order->products as $product) {
             $item = [
                 'item_name' => $product['name'],
+                'currency' => $_SESSION['currency'],
                 'quantity' => $product['qty'],
                 'price' => $this->formatCurrency($product['final_price']),
             ];
@@ -933,6 +928,7 @@ class ga4_analytics extends base
     {
         $item = [
             'name' => $cart_item['name'],
+            'currency' => $_SESSION['currency'],
             'quantity' => $cart_item['quantity'],
             'price' => $this->formatCurrency($cart_item['final_price']),
         ];
