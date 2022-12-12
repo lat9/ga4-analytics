@@ -243,7 +243,13 @@ class ga4_analytics extends base
 
                     $_SESSION['ga4_analytics'][] = [
                         'event' => 'view_item',
-                        'parameters' => $item,
+                        'parameters' => [
+                            'currency' => $_SESSION['currency'],
+                            'value' => $item['price'],
+                            'items' => [
+                                $item,
+                            ]
+                        ],
                     ];
                 } else {
                     switch ($current_page_base) {
