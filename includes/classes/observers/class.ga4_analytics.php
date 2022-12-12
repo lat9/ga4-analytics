@@ -573,16 +573,20 @@ class ga4_analytics extends base
                 if (empty($order_summary)) {
                     break;
                 }
+                $parameters = [
+                    'currency' => $order_summary['currency_code'],
+                    'transaction_id' => $order_summary['order_number'],
+                    'value' => $this->formatCurrency($order_summary['order_total']),
+                    'shipping' => $this->formatCurrency($order_summary['shipping']),
+                    'tax' => $this->formatCurrency($order_summary['tax']),
+                    'items' => $this->getItemsInOrder(),
+                ];
+                if (!empty($order_summary['coupon_code'])) {
+                    $parameters['coupon'] = $order_summary['coupon_code'];
+                }
                 $_SESSION['ga4_analytics'][] = [
                     'event' => 'purchase',
-                    'parameters' => [
-                        'currency' => $order_summary['currency_code'],
-                        'transaction_id' => $order_summary['order_number'],
-                        'value' => $this->formatCurrency($order_summary['order_total']),
-                        'shipping' => $this->formatCurrency($order_summary['shipping']),
-                        'tax' => $this->formatCurrency($order_summary['tax']),
-                        'items' => $this->getItemsInOrder(),
-                    ]
+                    'parameters' => $parameters,
                 ];
                 break;
 
@@ -796,13 +800,13 @@ class ga4_analytics extends base
         ];
         if (isset($_SESSION['cc_id'])) {
             $coupon = $db->Execute(
-                "SELECT coupon_name
+                "SELECT coupon_code
                    FROM " . TABLE_COUPONS . "
                   WHERE coupon_id = " . (int)$_SESSION['cc_id'] . "
                   LIMIT 1"
             );
             if (!$coupon->EOF) {
-                $checkout_parameters['coupon'] = $coupon->fields['coupon_name'];
+                $checkout_parameters['coupon'] = $coupon->fields['coupon_code'];
             }
         }
         return $checkout_parameters;
