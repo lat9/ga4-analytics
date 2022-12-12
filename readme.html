@@ -64,6 +64,25 @@ img {
 .smaller {
     font-size: smaller;
 }
+table {
+    margin-left: 20px;
+}
+table, table th, table td {
+    padding: 0.5rem;
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+th, td {
+    text-align: left;
+}
+table table {
+    margin-top: 0.5rem;
+}
+.event-group {
+    text-transform: uppercase;
+    border-top: 1px solid black;
+    padding-top: 0.5rem;
+}
 </style>
 </head>
 
@@ -76,7 +95,7 @@ img {
 
     <p><b>IMPORTANT NOTICE:</b></p>
     <hr>
-    <p>This plugin is a standalone solution for Google Analytics meant to replace any other Zen Cart plugins you might use right now. Do <b>not</b> use any other Google Analytics plugins (like "Simple Google Analytics or Easy Google Analytics") together with this plugin.
+    <p>This plugin is a standalone solution for GA4 Analytics meant to replace <b>all other</b> Zen Cart plugins you might use right now. Do <b>not</b> use any other Google Analytics plugins (like &quot;Simple Google Analytics&quot;, &quot;Easy Google Analytics&quot; or even the <em>legacy</em> &quot;EC Analytics&quot;) together with this plugin.
     <ul>
         <li>Make sure that you uninstall any other Google Analytics plugins before you install this plugin.</li>
         <li>Make sure that you did <b>not</b> add some Google tracking scripts anywhere manually in your Zen Cart files.</li>
@@ -85,21 +104,10 @@ img {
     </ul>
 
     <h2>Credits</h2>
-    <p>All credits to RodG for creating and publishing this plugin in the Zen Cart forums.</p>
+    <p>This plugin is based on the <a href="https://www.zen-cart.com/downloads.php?do=file&id=1997" target="_blank">EC Analytics</a> Zen Cart plugin, provided by @RodG and @webchills.</p>
 
     <h2>Purpose</h2>
-    <p>This module utilises the latest (as of May 2015) Google Enhanced Analytics Ecommerce API. It records all of your store sales data for viewing from your Google Analytics Account (which must be created before installing this module).</p>
-    <ul>
-        <li>The sales data is separated into product revenue, taxes and postage.</li>
-        <li>The product category is also recorded (up to 5 levels).</li>
-        <li>It will record the 1st product variant name (if available),</li>
-        <li>Records the checkout steps taken by the customers (and dropoffs for each step),</li>
-        <li>As well as this, the module records the normal 'page views', as well as other selected 'events', such as add/delete from cart.</li>
-        <li>In fact anything that can be processed by the zen-cart NOTIFIERS can be recorded and sent to Google simply by adding the notifier to the array in the class file.</li>
-        <li>Easy to install.</li>
-        <li>Doesn't overwrite or modify any existing files.</li>
-        <li>All that is needed for full functionality is your Google Analytics TrackingID "UA-XXXXXX.X" (which is why you need a Google Analytics Account before installing this module). If you already have a tracking ID you don't need to create a new one.</li>
-    </ul>
+    <p>This module utilizes the <em>Google Analytics 4</em> API, based on that API's documentation as of December 2022. It records all of your store sales data for viewing from your Google Analytics Account (which must be created before installing this module).  You'll need to create your site's &quot;GA4 Measuring ID&quot; (e.g. <code>G-xxxxxxxx</code>) before the plugin will start its measurements.  Refer to <a href="https://support.google.com/analytics/answer/10089681?utm_source=developers.google.com&utm_medium=referral" target="_blank">this</a> GA4 documentation link for additional information.</p>
 
     <h2>Installation and Upgrade</h2>
     <p><b>Before you start &hellip;</b></p>
@@ -123,40 +131,412 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
         </pre></li>
     </ol>
     <ol>
-        <li>Unzip this archive</li>
-        <li>Edit the file /includes/extra_datafiles/ec_analytics.php to include your UA-XXXXXXXX-X userID (from Google Analytics Website).</li>
-        <li>Rename the folder '/includes/templates/YOUR_TEMPLATE' so that it matches the name of your template/theme.</li>
-        <li>Copy all four files from the /includes/ folder to your store keeping the same folder/directory structure as per the extracted files.</li>
+        <li>Unzip this distribution's zip-file; you'll see the following files and directories:<ol type="a">
+            <li>/includes/auto_loaders/config.ga4_analytics.php</li>
+            <li>/includes/classes/observers/class.ga4_analytics.php</li>
+            <li>/includes/extra_cart_actions/ga4_analytics_actions.php</li>
+            <li>/includes/languages/english/extra_definitions/ga4_analytics_extra_definitions.php</li>
+            <li>/includes/templates/template_default/jscript/ga4_analytics_events_script.php</li>
+            <li>/includes/templates/template_default/jscript/ga4_analytics_start_script.php</li>
+            <li>/YOUR_ADMIN/includes/auto_loaders/config.ga4_analytics_admin.php</li>
+            <li>/YOUR_ADMIN/includes/init_includes/init_ga4_analytics_admin.php</li>
+            <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/ga4_analytics_admin_names.php</li>
+        </ol></li>
+        <li>Rename the <code>YOUR_ADMIN</code> sub-directory to match your site's Zen Cart admin directory.</li>
+        <li>Copy the plugin's files to your site's file-system.</li>
+        <li>Log into your Zen Cart admin and the plugin will perform its auto-install procedure.</li>
+        <li>You'll see a <em>GA4 Analytics Settings</em> element under the admin's <em>Configuration</em> tab; proceed to the configuration step, see below.</li>
     </ol>
 
-    <h2>Configuration</h2>
-    <p>If you haven't already done so, you should then log into the Analytics website.  Navigate to admin->view->Ecommerce Settings and tick the boxes to 'Enable Ecommerce'. Set the 'Enable Enhanced Ecommerce Reporting' to 'On'.</p>
-    <p>Optionally set up the 'Checkout Labelling' Funnel Steps. By default (at time of writing this), the module reports:</p>
+    <h2 id="config">Configuration</h2>
+    <p>The plugin adds its <em>GA4 Analytics Settings</em> group under the admin's <em>Configuration</em>, providing these configuration settings:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Plugin Version</td>
+                <td>The <em>GA4 Analytics</em> installed version.</td>
+            </tr>
+            <tr>
+                <td>GA4 Analytics Measuring ID</td>
+                <td>Enter the GA4 Analytics <em>Measuring ID</em> provided to you when you registered your site with google.  That ID will start with <code>G-</code>.  Set this value to an empty string (the default) to disable the <em>GA4 Analytics</em> plugin.</td>
+            </tr>
+            <tr id="variant-separator">
+                <td>Product Variants' Separator</td>
+                <td>If your store has products with multiple attributes, identify the character-string to use as a separator for an attributed product's <code>item_variant</code> property.  Default: <code>|</code>.</td>
+            </tr>
+            <tr>
+                <td>Enable Debug Mode?</td>
+                <td>Should <b>all</b> GA4 events be sent in <code>debug_mode</code>?  This can be used to help you debug your GA4 installation.  Default: <b>false</b>.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>GA4 Events Measured</h2>
+    <p>This section identifies the <em>GA4/gtag</em> events monitored by this plugin; see <a href="https://developers.google.com/analytics/devguides/collection/ga4/reference/events?client_type=gtag" target="_blank">this</a> Google documentation for the supported events and their basic parameters.</p>
+    <p><b>Notes:</b></p>
     <ol>
-        <li>Start Login</li>
-        <li>Login Success</li>
-        <li>Start Shipping (Std install) or Checkout Begin (FEC/COWOA)</li>
-        <li>Start Payment</li>
-        <li>Checkout Confirmation</li>
+        <li>One-time charges for products' pricing are <em>not</em> included (other than an order or cart event that includes an overall price).  There is no provision within the GA4 event schema to include those values on an individual product basis.</li>
     </ol>
-    <p>There is also a 'Checkout Success' being reported, but this is NOT logged as being a 'Checkout Step' as it is recorded/reported as being a 'completed transaction' in the checkout steps report page instead.</p>
-    <p><b>NOTE:</b> Not all checkout steps are recorded at all times.  This is because not everyone follows the same checkout procedure(s) and the steps are different than the zencart defaults if you happen to be using The FEC or COWOA (or other checkout) mods.</p>
 
-    <p>Should you wish to add/remove any checkout steps for your particular site this is easily achieved by editing the file <code>/includes/classes/observers/class.ec_analytics.php</code>.  The checkout steps are clearly identified.</p>
- 
-    <p>Should you wish to track other zen-cart 'NOTIFY' events, this is easily achieved by editing the file <code>/includes/classes/observers/class.ec_analytics.php</code>. You may add any valid NOTIFIER to the array at the beginning of the file.  No other changes needed.</p>
+    <h3 class="event-group">Product-view Events</h3>
+    <h4 id="product-common">Common Product View Event Parameters</h4>
+    <p>These parameters are provided for the product-view (either listings or an individual product) events:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Parameter Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>items</td>
+                <td>A numerically-indexed array of items/products associated with the event:<table>
+                    <thead>
+                        <tr>
+                            <th>Parameter Name</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>item_name</td>
+                            <td>The name of the product.</td>
+                        </tr>
+                        <tr>
+                            <td>quantity</td>
+                            <td>Always set to 1.</td>
+                        </tr>
+                        <tr>
+                            <td>price</td>
+                            <td>The product's per-unit price.</td>
+                        </tr>
+                        <tr>
+                            <td>item_id</td>
+                            <td>Contains the product's model-number, so long as that value isn't blank.</td>
+                        </tr>
+                        <tr>
+                            <td>brand</td>
+                            <td>The name of the product's brand, aka manufacturer, so long as a manufacturer has been defined for the product.</td>
+                        </tr>
+                        <tr>
+                            <td>item_category</td>
+                            <td>The name of the product's current first-level category name.</td>
+                        </tr>
+                        <tr>
+                            <td>item_category<code>2-5</code></td>
+                            <td>The name of the product's sub-category names, up to 5 levels deep.</td>
+                        </tr>
+                        <tr>
+                            <td>item_variant</td>
+                            <td>If the product has attributes, contains a string containing the options' names (separated by the <a href="#variant-separator">Variant Separator</a>).  Note that text- and file-type attributes are not included.</td>
+                        </tr>
+                    </tbody>
+                </table></td>
+            </tr>
+        </tbody>
+    </table>
+    <h4>view_item</h4>
+    <p>This event is sent at the end of a product's detailed-view page, e.g. <code>product_info</code> page's rendering.  In addition to the <a href="#product-common">Common Product View Event Parameters</a>, this event includes:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Parameter Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>currency</td>
+                <td>A copy of the <code>$_SESSION['currency']</code>, e.g. <code>USD</code>.</td>
+            </tr>
+            <tr>
+                <td>value</td>
+                <td>The item's current price.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4>view_item_list</h4>
+    <p>This event is sent on various product-listing pages (<code>specials</code>, <code>products_new</code>, <code>products_all</code>, <code>featured_products</code> as well as the category-based products' listings.  In addition to the <a href="#product-common">Common Product View Event Parameters</a>, this event includes:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Parameter Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>item_list_name</td>
+                <td>Set to a language constant, defined in <code>/includes/languages/english/extra_definitions/ga4_analytics_extra_definitions.php</code>, that identifies the type of listing being viewed.</td>
+            </tr>
+        </tbody>
+    </table>
 
-    <p><em>Tip#1:</em> As none of my customers use affliation sales (and ZenCart, by default isn't set up for it) I have opted to populate this data field (affiliation) with the method of payment instead.</p>
+    <h3 class="event-group">Cart-related Events</h3>
+    <h4 id="cart-common">Common Cart Event Parameters</h4>
+    <p>These parameters are provided for <b>all</b> the cart-related events, gathered via the <code>shopping_cart</code> class' <code>get_products</code> method:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Parameter Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>currency</td>
+                <td>The current value of <code>$_SESSION['currency']</code>, e.g. <code>USD</code>.</td>
+            </tr>
+            <tr>
+                <td>value</td>
+                <td>The overall value associated with the event, converted to a 2-decimal numeric value.</td>
+            </tr>
+            <tr>
+                <td>items</td>
+                <td>A numerically-indexed array of items/products associated with the event:<table>
+                    <thead>
+                        <tr>
+                            <th>Parameter Name</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>item_name</td>
+                            <td>The name of the product.</td>
+                        </tr>
+                        <tr>
+                            <td>quantity</td>
+                            <td>The product quantity associated with the event, e.g. the quantity added or removed.</td>
+                        </tr>
+                        <tr>
+                            <td>price</td>
+                            <td>The product's per-unit price.</td>
+                        </tr>
+                        <tr>
+                            <td>item_id</td>
+                            <td>Contains the product's model-number, so long as that value isn't blank.</td>
+                        </tr>
+                        <tr>
+                            <td>brand</td>
+                            <td>The name of the product's brand, aka manufacturer, so long as a manufacturer has been defined for the product.</td>
+                        </tr>
+                        <tr>
+                            <td>item_category</td>
+                            <td>The name of the product's current first-level category name.</td>
+                        </tr>
+                        <tr>
+                            <td>item_category<code>2-5</code></td>
+                            <td>The name of the product's sub-category names, up to 5 levels deep.</td>
+                        </tr>
+                        <tr>
+                            <td>item_variant</td>
+                            <td>If the product has attributes, contains a string containing the options' name and the option's value name (separated by the <a href="#variant-separator">Variant Separator</a>).  Note that text- and file-type attributes are not included.</td>
+                        </tr>
+                    </tbody>
+                </table></td>
+            </tr>
+        </tbody>
+    </table>
+    <h4>view_cart</h4>
+    <p>This event is sent at the end of the <code>shopping_cart</code> page's rendering, so long as the cart is not empty.  The overall <code>value</code> parameter reflects the cart's current value.</p>
+    <h4>add_to_cart</h4>
+    <p>This event is sent whenever a product is added to the cart, which can occur under various conditions:</p>
+    <ol>
+        <li>From a products' listing page.</li>
+        <li>From a product's detailed information page.</li>
+        <li>Upon customer login, when previously-stored items in the <code>customers_basket</code> are added.</li>
+        <li>From the <code>shopping_cart</code> page, when a current product's quantity is increased.</li>
+    </ol>
+    <h4>remove_from_cart</h4>
+    <p>This event is sent whenever a product is removed from the cart, which can occur under various conditions:</p>
+    <ol>
+        <li>From the <code>shopping_cart</code> page, when a current product's quantity is decreased.</li>
+        <li>From the <code>shopping_cart</code> page, when a current product is removed.</li>
+        <li>When the <code>shopping_cart</code> class receives a request to <code>remove_all</code> products from the cart.</li>
+    </ol>
 
-    <p><em>Tip#2:</em> The customerID (from the store) is recorded in Google analytics as 'Dimension1'. You can give this a more meaningful name from the GA admin page - > Property - > Custom Definitions -> Custom Dimensions. (I call mine simple 'CustomerID').</p>
+    <h3 class="event-group">Checkout-related Events</h3>
+    <h4 id="checkout-common">Common Checkout Parameters</h4>
+    <p>Some parameters are common to <b>all</b> the checkout-related events:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Parameter Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>currency</td>
+                <td>The current value of <code>$_SESSION['currency']</code>, e.g. <code>USD</code>.</td>
+            </tr>
+            <tr>
+                <td>value</td>
+                <td>The order's overall value, <code>$order->info['total']</code>, converted to a 2-decimal numeric value.</td>
+            </tr>
+            <tr>
+                <td>coupon</td>
+                <td>If the order is currently being processed with a coupon, e.g. <code>$_SESSION['cc_id']</code> is set, this parameter is present and set to the <code>coupon_code</code> of the current coupon.</td>
+            </tr>
+            <tr>
+                <td>items</td>
+                <td>A numerically-indexed array of items/products in the order:<table>
+                    <thead>
+                        <tr>
+                            <th>Parameter Name</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>item_name</td>
+                            <td>The name of the product, as recorded in the order.</td>
+                        </tr>
+                        <tr>
+                            <td>currency</td>
+                            <td>The current value of <code>$_SESSION['currency']</code>, e.g. <code>USD</code>.</td>
+                        </tr>
+                        <tr>
+                            <td>quantity</td>
+                            <td>The quantity of the product ordered, as recorded in the order.</td>
+                        </tr>
+                        <tr>
+                            <td>price</td>
+                            <td>The product's per-unit price, as recorded in the order's <code>final_price</code> for the product.</td>
+                        </tr>
+                        <tr>
+                            <td>item_id</td>
+                            <td>Contains the product's model-number, as recorded in the order, so long as that value isn't blank.</td>
+                        </tr>
+                        <tr>
+                            <td>brand</td>
+                            <td>The name of the product's brand, aka manufacturer, so long as a manufacturer has been defined for the product.</td>
+                        </tr>
+                        <tr>
+                            <td>item_category</td>
+                            <td>The name of the product's current first-level category name.</td>
+                        </tr>
+                        <tr>
+                            <td>item_category<code>2-5</code></td>
+                            <td>The name of the product's sub-category names, up to 5 levels deep.</td>
+                        </tr>
+                        <tr>
+                            <td>item_variant</td>
+                            <td>If the product has attributes, contains a string containing the options' name and the option's value name (separated by the <a href="#variant-separator">Variant Separator</a>).  Note that text- and file-type attributes are not included.</td>
+                        </tr>
+                    </tbody>
+                </table></td>
+            </tr>
+        </tbody>
+    </table>
+    <h4>begin_checkout</h4>
+    <p>If the order contains physical products, this event is sent at the end of the <code>checkout_shipping</code> page's rendering; otherwise, it is sent at the end of the <code>checkout_payment</code> page's rendering, so long as the <code>checkout_confirmation</code> page <em>was <b>not</b></em> its referrer. The event includes only the parameters identified in <a href="#checkout-common">Common Checkout Parameters</a>.</p>
+    <h4>add_shipping_info</h4>
+    <p>This event is sent at the end of the <code>checkout_payment</code> page's rendering, so long as the <code>checkout_confirmation</code> page <em>was <b>not</b></em> its referrer.  In addition to the <a href="#checkout-common">Common Checkout Parameters</a>, this event includes:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Parameter Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>shipping_tier</td>
+                <td>The currently-selected shipping method, as recorded in the order's <code>info['shipping_method']</code>, e.g. <code>Store Pickup (Walk In)</code>.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4>add_payment_info</h4>
+    <p>This event is sent at the end of the <code>checkout_confirmation</code> page's rendering, so long as the <code>checkout_payment</code> page was its referrer.  In addition to the <a href="#checkout-common">Common Checkout Parameters</a>, this event includes:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Parameter Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>payment_type</td>
+                <td>The currently-selected payment type, as recorded in <code>$_SESSION['payment']</code>, e.g. <code>moneyorder</code>.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4>purchase</h4>
+    <p>This event is sent at the end of the <code>checkout_success</code> page's <b>first</b> rendering of the just-placed order, i.e. the <code>$order_summary</code> value is not empty.  In addition to the <a href="#checkout-common">Common Checkout Parameters</a>, this event includes:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Parameter Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>transaction_id</td>
+                <td>The just-placed order's <code>orders_id</code>.</td>
+            </tr>
+            <tr>
+                <td>shipping</td>
+                <td>The portion of the order's <code>value</code> that reflects the order's shipping cost.</td>
+            </tr>
+            <tr>
+                <td>tax</td>
+                <td>The portion of the order's <code>value</code> that reflects the order's tax.</td>
+            </tr>
+        </tbody>
+    </table>
 
-    <p><b>IMPORTANT:</b> Before accumulating too much data you should carefully consider the checkout steps recordings and make changes if needed. The data associated with these steps are stored by Google by step number (not name), so if you add/remove/re-order this 'funnel' the existing data recordings remain unchanged, so if (for example) you remove the 'Start Login' (step#1), the 'Login Success' will become the new step# and all previously stored data for 'Start Login' will now appear in the reports as 'Login Success'. If you add a step before an existing step, all of the 'Checkout Confirmation' recordings will 'dissapear' as this will now be the 6th 'step' that has no previously recorded data. Google analytics doesn't provide any means of modifying existing data (other than deleting the site and re-adding it).</p>
+    <h3 class="event-group">Other Events</h3>
+    <h4>login</h4>
+    <p>This event is sent upon a successful customer login, including the following parameter list:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Parameter Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>method</td>
+                <td>Set to either <code>normal</code>, on a returning customer's login, or <code>create_account</code>, if the login was the result of a customer's successful account-creation.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4>sign_up</h4>
+    <p>This event is sent when a customer successfully creates an account; no additional parameters are included.</p>
+    <h4>search</h4>
+    <p>This event is sent at the end of a search-results' page's header, including the following parameter list:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Parameter Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>search_term</td>
+                <td>Set to the &quot;keywords&quot; for which the customer has searched.</td>
+            </tr>
+        </tbody>
+    </table>
 
     <h2>Version History</h2>
     <p>These sections identify the GA4 Analytics changes as well as the change-history associated with the EC Analytics plugin, on which it's based.</p>
     <h3>GA4 Analytics Version History</h3>
     <ul>
-        <li>v1.0.0, 2022-12-05 (lat9)<ul>
+        <li>v1.0.0, 2022-12-12 (lat9)<ul>
             <li>&quot;Measuring ID&quot; is stored in the database; See <em>Configuration :: GA4 Analytics Settings</em></li>
             <li>Include <em>all</em> product types for the <code>view_item</code> event; was only <code>product_info</code>.</li>
         </ul></li>
