@@ -182,6 +182,7 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
     <p><b>Notes:</b></p>
     <ol>
         <li>One-time charges for products' pricing are <em>not</em> included (other than an order or cart event that includes an overall price).  There is no provision within the GA4 event schema to include those values on an individual product basis.</li>
+        <li>If a customer is currently logged-in (and not in guest-checkout), the <code>gtag('config', ...);</code> event includes the <em>user_id</em> parameter, set to the logged-in customer's <code>customers_id</code>.  See <a href="https://developers.google.com/analytics/devguides/collection/ga4/user-id/?platform=websites" target="_blank">this</a> GA4 documentation link for additional details.</li>
     </ol>
 
     <h3 class="event-group">Product-view Events</h3>
