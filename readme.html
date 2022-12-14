@@ -102,6 +102,7 @@ table table {
         <li>Make sure that you do <b>not</b> add additional Adwords conversion tracking codes/scripts anywhere in your store.</li>
         <li>If you are using Adwords campaigns make sure that your Google Analytics account is linked with your Google Adwords account.</li>
     </ul>
+    <p><b>Note:</b> The initial version of this plugin <em>does not <b>fully</b> support</em> <a href="https://www.zen-cart.com/downloads.php?do=file&id=2095" target="_blank">One-Page Checkout</a>.  Specifically, the <a href="#checkout">checkout-related</a> <code>add_shipping_info</code> and <code>add_payment_info</code> events will not be reported.  The <code>purchase</code> events will be reported regardless of the checkout processing your store uses.</p>
 
     <h2>Credits</h2>
     <p>This plugin is based on the <a href="https://www.zen-cart.com/downloads.php?do=file&id=1997" target="_blank">EC Analytics</a> Zen Cart plugin, provided by @RodG and @webchills.</p>
@@ -364,7 +365,7 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
         <li>When the <code>shopping_cart</code> class receives a request to <code>remove_all</code> products from the cart.</li>
     </ol>
 
-    <h3 class="event-group">Checkout-related Events</h3>
+    <h3 id="checkout" class="event-group">Checkout-related Events</h3>
     <h4 id="checkout-common">Common Checkout Parameters</h4>
     <p>Some parameters are common to <b>all</b> the checkout-related events:</p>
     <table>
