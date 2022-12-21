@@ -3,7 +3,7 @@
 // Part of the "GA4 Analytics" plugin, created by lat9 (https://vinosdefrutastropicales.com)
 // Copyright (c) 2022, Vinos de Frutas Tropicales.
 //
-define('GA4_ANALYTICS_CURRENT_VERSION', '1.0.0');
+define('GA4_ANALYTICS_CURRENT_VERSION', '1.0.1-beta1');
 
 // -----
 // Wait until an admin is logged in before installing or updating ...
@@ -83,5 +83,20 @@ if (GA4_ANALYTICS_VERSION !== GA4_ANALYTICS_CURRENT_VERSION) {
     );
     if (GA4_ANALYTICS_VERSION !== '0.0.0') {
         $messageStack->add_session(sprintf(GA4_ANALYTICS_UPDATE_SUCCESS, GA4_ANALYTICS_VERSION, GA4_ANALYTICS_CURRENT_VERSION), 'success');
+    }
+}
+
+// -----
+// Check to ensure that, if set, the module's "Measuring ID" starts with 'G-'; otherwise, the storefront processing
+// is disabled.
+//
+if ($current_page === (FILENAME_CONFIGURATION . '.php') && isset($_GET['gID']) && $_GET['gID'] === $cgi) {
+    $ga4_check = $db->Execute(
+        "SELECT configuration_value
+           FROM " . TABLE_CONFIGURATION . "
+          WHERE configuration_key = 'GA4_ANALYTICS_TRACKING_ID'"
+    );
+    if (!$ga4_check->EOF && $ga4_check->fields['configuration_value'] !== '' && strpos($ga4_check->fields['configuration_value'], 'G-') !== 0) {
+        $messageStack->add(GA4_ANALYTICS_INVALID_TAG_ERROR, 'error');
     }
 }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GA4 Analytics for Zen Cart 1.5.7 and Later</title>
+<title>GA4 Analytics for Zen Cart 1.5.6b and Later</title>
 <style type="text/css">
 a, a:active, 
 a:visited { 
@@ -88,7 +88,7 @@ table table {
 
 <body>
     <h1>GA4 Analytics for Zen Cart v1.5.6b and later, including v1.5.8</h1>
-    <h3>Version 1.0.0</h3>
+    <h3>Version 1.0.1</h3>
     <p>Current Support Thread at Zen Cart Forums: <a href="javascript:void();" target="_blank">TBD</a></p>
     <p>Zen Cart Download Link: <a href="javascript:void();" target="_blank">TBD</a></p>
     <p>GitHub repository: <a href="https://github.com/lat9/ga4-analytics" target="_blank">https://github.com/lat9/ga4-analytics</a>.</p>
@@ -538,6 +538,14 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
     <p>These sections identify the GA4 Analytics changes as well as the change-history associated with the EC Analytics plugin, on which it's based.</p>
     <h3>GA4 Analytics Version History</h3>
     <ul>
+        <li>v1.0.1, 2022-12-21 (lat9)<ul>
+            <li>Alert the admin of a &quot;Measuring ID&quot; rather than filling up the logs sub-directory!</li>
+            <li>The following files were changes:<ol>
+                <li>/includes/classes/observers/class.ga4_analytics.php</li>
+                <li>/YOUR_ADMIN/includes/init_includes/init_ga4_analytics_admin.php</li>
+                <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/ga4_analytics_admin_names.php</li>
+            </ol></li>
+        </ul></li>
         <li>v1.0.0, 2022-12-12 (lat9)<ul>
             <li>&quot;Measuring ID&quot; is stored in the database; See <em>Configuration :: GA4 Analytics Settings</em></li>
             <li>Include <em>all</em> product types for the <code>view_item</code> event; was only <code>product_info</code>.</li>

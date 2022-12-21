@@ -3,6 +3,8 @@
 // Part of the "GA4 Analytics" plugin, created by lat9 (https://vinosdefrutastropicales.com)
 // Copyright (c) 2022, Vinos de Frutas Tropicales.
 //
+// Last updated: v1.0.1
+//
 // Based on:
 /**
  * @package Google Enhanced E-Commerce Analytics
@@ -27,18 +29,9 @@ class ga4_analytics extends base
     function __construct()
     {
         // -----
-        // If the configuration's not yet set or not yet configured, nothing further to be done.
+        // If the configuration's not yet set or the measurement ID doesn't start with 'G-', nothing further to be done.
         //
-        if (!defined('GA4_ANALYTICS_TRACKING_ID') || GA4_ANALYTICS_TRACKING_ID === '') {
-            return;
-        }
-
-        // -----
-        // GA4 measurement IDs start with 'G-'; if the configured measurement ID doesn't, log a
-        // PHP notice and discontinue processing.
-        //
-        if (strpos(GA4_ANALYTICS_TRACKING_ID, 'G-') !== 0) {
-            trigger_error('GA4 Analytics is disabled; the measurement ID (' . GA4_ANALYTICS_TRACKING_ID . ') should start with \'G-\'.', E_USER_NOTICE);
+        if (!defined('GA4_ANALYTICS_TRACKING_ID') || strpos(GA4_ANALYTICS_TRACKING_ID, 'G-') !== 0) {
             return;
         }
 
