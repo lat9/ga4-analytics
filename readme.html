@@ -167,6 +167,10 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
                 <td>GA4 Analytics Measuring ID</td>
                 <td>Enter the GA4 Analytics <em>Measuring ID</em> provided to you when you registered your site with google.  That ID will start with <code>G-</code>.  Set this value to an empty string (the default) to disable the <em>GA4 Analytics</em> plugin.</td>
             </tr>
+            <tr>
+                <td>Universal Analytics Tracking ID</td>
+                <td>If you want to enable &quot;dual tagging&quot; to keep your <em>Universal Analytics</em> implementation in place while you build out your Google Analytics 4 implementation, enter that tracking ID here.  That ID will start with <code>UA-</code>.  If this value starts with <code>UA-</code>, an additional <code>gtag</code> configuration event will be set at the start of each page load, so long as the main GA4 Analytics module is enabled.  See this <a href="https://support.google.com/analytics/answer/11091026" target="_blank">Google documentation</a> for more information.  This value was added in v1.0.1.</td>
+            </tr>
             <tr id="variant-separator">
                 <td>Product Variants' Separator</td>
                 <td>If your store has products with multiple attributes, identify the character-string to use as a separator for an attributed product's <code>item_variant</code> property.  Default: <code>|</code>.</td>
@@ -540,8 +544,10 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
     <ul>
         <li>v1.0.1, 2022-12-21 (lat9)<ul>
             <li>Alert the admin of a &quot;Measuring ID&quot; rather than filling up the logs sub-directory!</li>
+            <li>Enable a site to do &quot;dual tagging&quot; with a previously set-up <em>Universal Analytics</em> tag.</li>
             <li>The following files were changes:<ol>
                 <li>/includes/classes/observers/class.ga4_analytics.php</li>
+                <li>/includes/templates/template_default/jscript/ga4_analytics_start_script.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_ga4_analytics_admin.php</li>
                 <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/ga4_analytics_admin_names.php</li>
             </ol></li>
