@@ -7,3 +7,4 @@ Helpful links:
 - Enabling `DebugView`: https://support.google.com/analytics/answer/7201382
 - On-line sales events: https://support.google.com/analytics/answer/9267735#online-sales
 - Various events and parameters: https://developers.google.com/analytics/devguides/collection/ga4/reference/events?client_type=gtag
+- Enabling "dual tagging" with Universal Analytics: https://support.google.com/analytics/answer/11091026
