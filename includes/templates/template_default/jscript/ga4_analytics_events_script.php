@@ -30,6 +30,16 @@ if (empty($_SESSION['ga4_analytics'])) {
 // sent in GA4's 'debug_mode'.
 //
 $ga4_debug_mode = (GA4_ANALYTICS_DEBUG_MODE === 'true');
+
+// -----
+// If the debug-mode is enabled and the configuration value (added in v1.1.0) indicates that there's a
+// limit on the IP addresses for which the mode should be enabled, enable the debug mode only if the
+// current IP address is in that specified list.
+//
+if ($ga4_debug_mode === true && isset($_SERVER['REMOTE_ADDR']) && defined('GA4_ANALYTICS_DEBUG_IP_LIST') && GA4_ANALYTICS_DEBUG_IP_LIST !== '') {
+    $ga4_ip_list = explode(',', str_replace(' ', '', GA4_ANALYTICS_DEBUG_IP_LIST));
+    $ga4_debug_mode = in_array($_SERVER['REMOTE_ADDR'], $ga4_ip_list);
+}
 ?>
 <script>
 <?php

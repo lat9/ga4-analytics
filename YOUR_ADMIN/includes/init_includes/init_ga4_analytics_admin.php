@@ -3,7 +3,7 @@
 // Part of the "GA4 Analytics" plugin, created by lat9 (https://vinosdefrutastropicales.com)
 // Copyright (c) 2022, Vinos de Frutas Tropicales.
 //
-define('GA4_ANALYTICS_CURRENT_VERSION', '1.0.1');
+define('GA4_ANALYTICS_CURRENT_VERSION', '1.1.0-beta1');
 
 // -----
 // Wait until an admin is logged in before installing or updating ...
@@ -81,6 +81,16 @@ if (GA4_ANALYTICS_VERSION !== GA4_ANALYTICS_CURRENT_VERSION) {
                     (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function)
                  VALUES
                     ('Universal Analytics Tracking ID', 'GA4_ANALYTICS_TRACKING_ID_UA', '', 'If you want to enable &quot;dual tagging&quot; to keep your <em>Universal Analytics</em> implementation in place while you build out your Google Analytics 4 implementation, enter that tracking ID here.  That ID will start with <code>UA-</code>.  If this value starts with <code>UA-</code>, an additional <code>gtag</code> configuration event will be set at the start of each page load, so long as the main GA4 Analytics module is enabled.<br>', $cgi, now(), 8, NULL, NULL)"
+            );
+
+        case version_compare(GA4_ANALYTICS_VERSION, '1.1.0', '<'):      //-Fall through from above processing ...
+            $db->Execute(
+                "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
+                    (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function)
+                 VALUES
+                    ('Choose <code>item_id</code> Parameter Value', 'GA4_ANALYTICS_ITEM_ID_VALUE', 'products_model', 'When products are included in GA4 events, what value should be used for the <code>item_id</code> parameter?  If you choose <code>products_id</code>, a plugin-specific <code>item_model</code> parameter will be included, containing the product\'s model (if that value is not empty).  Default: <code>products_model</code>', $cgi, now(), 25, NULL, 'zen_cfg_select_option([\'products_model\', \'products_id\'],'),
+
+                    ('Debug Mode, IP List', 'GA4_ANALYTICS_DEBUG_IP_LIST', '', 'If you want to enable <em>Debug Mode</em> for only certain IP addresses, enter those IP addresses here, using a comma-separated list (intervening spaces are OK).  Leave this field empty (the default) and the <em>Debug Mode</em> applies to <b>all</b> IP addresses.<br>', $cgi, now(), 505, NULL, NULL)"
             );
 
         default:            //-Fall through from above processing ...
