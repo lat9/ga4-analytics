@@ -3,6 +3,8 @@
 // Part of the "GA4 Analytics" plugin, created by lat9 (https://vinosdefrutastropicales.com)
 // Copyright (c) 2022, Vinos de Frutas Tropicales.
 //
+// Last updated: v1.1.0
+//
 // This script is loaded based on a notification that a page's rendering is complete and the </body> tag
 // is about to be rendered by /includes/classes/observers/class.ga4_analytics.php, so long as the
 // GA4 Analytics is currently enabled.
@@ -37,6 +39,7 @@ foreach ($_SESSION['ga4_analytics'] as $next_event) {
         if ($ga4_debug_mode === true) {
             $next_event['parameters']['debug_mode'] = true;
         }
+        $next_event['parameters']['send_to'] = $ga4_group_name;     //-Set by ga4_analytics_start_script.php
         $event_parameters = ', ' . json_encode($next_event['parameters']);
     }
 ?>
