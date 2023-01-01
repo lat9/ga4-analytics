@@ -17,6 +17,8 @@
 // this (https://developers.google.com/analytics/devguides/collection/ga4/user-id/?platform=websites) google
 // documentation for additional information.
 //
+global $ga4_group_name;
+
 $ga4_group_name = 'GA4';
 $ga4_config_parameters = [
     'groups' => $ga4_group_name,

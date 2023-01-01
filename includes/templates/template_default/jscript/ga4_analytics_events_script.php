@@ -15,7 +15,7 @@
 // their associated parameter values ('parameters').  Give an observer the chance to augment any existing events'
 // parameters and/or add custom events.
 //
-global $zco_notifier;
+global $zco_notifier, $ga4_group_name;
 $zco_notifier->notify('NOTIFY_GA4_BEFORE_EVENT_OUTPUT');
 
 // -----
