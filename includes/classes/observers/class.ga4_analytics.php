@@ -3,7 +3,7 @@
 // Part of the "GA4 Analytics" plugin, created by lat9 (https://vinosdefrutastropicales.com)
 // Copyright (c) 2022, Vinos de Frutas Tropicales.
 //
-// Last updated: v1.0.1
+// Last updated: v1.1.0
 //
 // Based on:
 /**
@@ -24,7 +24,8 @@ class ga4_analytics extends base
         $canShowPrices,             //- Indicates whether prices can be included, based on the store status and customer authorization
         $productAdded = false,      //- Information about a product being added to the cart, an array containing the uprid and quantity on entry; false otherwise.
         $currentCartSaved = false,  //- Identifies that the $currentCart value reflects the customer's cart's current contents.
-        $currentCart = false;       //- Contains the current cart's products' info, set on a cart-related action.
+        $currentCart = false,       //- Contains the current cart's products' info, set on a cart-related action.
+        $useModelAsItemId = true;   //- Indicates whether the product's model should be used for any 'item_id' values; if not, then the 'products_id' is used instead.
 
     function __construct()
     {
@@ -70,6 +71,7 @@ class ga4_analytics extends base
         $this->isConfigured = true;
         $this->enabled = true;
         $this->measurement_id = GA4_ANALYTICS_TRACKING_ID;
+        $this->useModelAsItemId = (defined('GA4_ANALYTICS_ITEM_ID_VALUE') && GA4_ANALYTICS_ITEM_ID_VALUE === 'products_model');
         $this->attach(
             $this,
             [
@@ -687,9 +689,9 @@ class ga4_analytics extends base
             $item['currency'] = $_SESSION['currency'];
             $item['price'] = $this->formatCurrency($item_price);
         }
-        if (!empty($product['products_model'])) {
-            $item['id'] = $product['products_model'];
-        }
+
+        $item = array_merge($item, $this->getItemIdAndModel($products_id, $product['products_model'] ?? ''));
+
         $brand = zen_get_products_manufacturers_name($products_id);
         if ($brand !== '') {
             $item['item_brand'] = $brand;
@@ -754,7 +756,28 @@ class ga4_analytics extends base
             $products_price = zen_get_products_base_price($products_id);
         }
         return zen_add_tax($products_price, zen_get_tax_rate($product_check->fields['products_tax_class_id']));
-     }
+    }
+
+    // -----
+    // Starting with v1.1.0, a site can specify whether the products_model or $products_id is to
+    // be sent as an 'item_id'.  If the products_id is being used and the products_model is not
+    // empty, a plugin-specific item_model parameter is included.
+    //
+    protected function getItemIdAndModel($products_id, $products_model)
+    {
+        $id_and_model = [];
+        if ($this->useModelAsItemId === true) {
+            if (!empty($products_model)) {
+                $id_and_model['item_id'] = $products_model;
+            }
+        } else {
+            $id_and_model['item_id'] = $products_id;
+            if (!empty($products_model)) {
+                $id_and_model['item_model'] = $products_model;
+            }
+        }
+        return $id_and_model;
+    }
 
     // -----
     // The various listing-type pages are very inconsistent in their inclusion of product pricing and, if
@@ -775,9 +798,9 @@ class ga4_analytics extends base
                 $item['currency'] = $_SESSION['currency'];
                 $item['price'] = $this->formatCurrency($item_price);
             }
-            if (!empty($product['products_model'])) {
-                $item['item_id'] = $product['products_model'];
-            }
+
+            $item = array_merge($item, $this->getItemIdAndModel($products_id, $product['products_model'] ?? ''));
+
             $brand = zen_get_products_manufacturers_name($products_id);
             if ($brand !== '') {
                 $item['item_brand'] = $brand;
@@ -827,9 +850,9 @@ class ga4_analytics extends base
                 'quantity' => $product['qty'],
                 'price' => $this->formatCurrency($product['final_price']),
             ];
-            if ($product['model'] !== '') {
-                $item['item_id'] = $product['model'];
-            }
+
+            $item = array_merge($item, $this->getItemIdAndModel($product['id'], $product['model']));
+
             $brand = zen_get_products_manufacturers_name((int)$product['id']);
             if ($brand !== '') {
                 $item['item_brand'] = $brand;
@@ -935,9 +958,9 @@ class ga4_analytics extends base
             'quantity' => $cart_item['quantity'],
             'price' => $this->formatCurrency($cart_item['final_price']),
         ];
-        if ($cart_item['model'] !== '') {
-            $item['item_id'] = $cart_item['model'];
-        }
+
+        $item = array_merge($item, $this->getItemIdAndModel($cart_item['id'], $cart_item['model']));
+
         $brand = zen_get_products_manufacturers_name((int)$cart_item['id']);
         if ($brand !== '') {
             $item['item_brand'] = $brand;
