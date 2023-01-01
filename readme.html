@@ -577,6 +577,7 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
             <li>If &quot;dual tagging&quot; is enabled, use the <code>group</code> parameter on the <code>config</code> tag and include a <code>send_to</code> parameter on each GA4 event sent.  The group name used is <code>GA4</code>.</li>
             <li>Enable a site to limit the IP addresses for which the <em>Debug Mode</em> is enabled.</li>
             <li>Add a configuration switch, allowing a store to choose between the <code>products_model</code> and the <code>products_id</code> for the value of any item's <code>item_id</code>.</li>
+            <li>Correct products' listing; the model number wasn't available at the time of the original notification.</li>
             <li>The following files were changes:<ol>
                 <li>/includes/classes/observers/class.ga4_analytics.php</li>
                 <li>/includes/templates/template_default/jscript/ga4_analytics_start_script.php</li>

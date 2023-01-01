@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the "GA4 Analytics" plugin, created by lat9 (https://vinosdefrutastropicales.com)
-// Copyright (c) 2022, Vinos de Frutas Tropicales.
+// Copyright (c) 2022-2023, Vinos de Frutas Tropicales.
 //
 // Last updated: v1.1.0
 //
@@ -91,7 +91,6 @@ class ga4_analytics extends base
 
                 /* 'view_item_list' events */
                 'NOTIFY_HEADER_END_FEATURED_PRODUCTS',
-                'NOTIFY_HEADER_INDEX_MAIN_TEMPLATE_VARS_PAGE_BODY',
                 'NOTIFY_HTML_HEAD_START',       //- for products_all and products_new, since they provide no notifications from their respective headers.
 
                 /* cart-related events */
@@ -307,6 +306,24 @@ class ga4_analytics extends base
                             ];
                             break;
 
+                        // -----
+                        // The index products' listing doesn't get generated until the
+                        // template renders, pulling in the /modules/products_listing.php
+                        //
+                        case FILENAME_DEFAULT:
+                            global $category_depth, $listing;
+                            if ($category_depth !== 'products' || $listing->RecordCount() === 0) {
+                                break;
+                            }
+                            $_SESSION['ga4_analytics'][] = [
+                                'event' => 'view_item_list',
+                                'parameters' => [
+                                    'item_list_name' => GA4_ANALYTICS_PRODUCTS_LISTING,
+                                    'items' => $this->getListingItems($listing)
+                                ]
+                            ];
+                            break;
+
                         default:
                             break;
                     }
@@ -327,21 +344,6 @@ class ga4_analytics extends base
                     'parameters' => [
                         'item_list_name' => GA4_ANALYTICS_FEATURED_PRODUCTS,
                         'items' => $this->getListingItems($featured_products),
-                    ]
-                ];
-                break;
-
-            case 'NOTIFY_HEADER_INDEX_MAIN_TEMPLATE_VARS_PAGE_BODY':
-                global $category_depth, $listing;
-
-                if ($category_depth !== 'products' || $listing->EOF) {
-                    break;
-                }
-                $_SESSION['ga4_analytics'][] = [
-                    'event' => 'view_item_list',
-                    'parameters' => [
-                        'item_list_name' => GA4_ANALYTICS_PRODUCTS_LISTING,
-                        'items' => $this->getListingItems($listing)
                     ]
                 ];
                 break;
