@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the "GA4 Analytics" plugin, created by lat9 (https://vinosdefrutastropicales.com)
-// Copyright (c) 2022-2023, Vinos de Frutas Tropicales.
+// Copyright (c) 2022, Vinos de Frutas Tropicales.
 //
 // Last updated: v1.1.0
 //
@@ -763,7 +763,7 @@ class ga4_analytics extends base
     // -----
     // Starting with v1.1.0, a site can specify whether the products_model or $products_id is to
     // be sent as an 'item_id'.  If the products_id is being used and the products_model is not
-    // empty, a plugin-specific item_model parameter is included.
+    // empty, a customized ep.item_model parameter is included.
     //
     protected function getItemIdAndModel($products_id, $products_model)
     {
@@ -773,9 +773,13 @@ class ga4_analytics extends base
                 $id_and_model['item_id'] = $products_model;
             }
         } else {
+            // -----
+            // See this (https://www.simoahava.com/analytics/implementation-guide-events-google-analytics-4/) article
+            // that described GA4 custom-event naming.  An 'ep.' prefix is for a string value, 'epn.' is for a numeric value.
+            //
             $id_and_model['item_id'] = $products_id;
             if (!empty($products_model)) {
-                $id_and_model['item_model'] = $products_model;
+                $id_and_model['ep.item_model'] = $products_model;
             }
         }
         return $id_and_model;
