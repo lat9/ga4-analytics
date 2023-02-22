@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the "GA4 Analytics" plugin, created by lat9 (https://vinosdefrutastropicales.com)
-// Copyright (c) 2022, Vinos de Frutas Tropicales.
+// Copyright (c) 2022-2023, Vinos de Frutas Tropicales.
 //
 // Last updated: v1.1.0
 //
@@ -75,9 +75,6 @@ class ga4_analytics extends base
         $this->attach(
             $this,
             [
-                /* GA4-specific, start of a cart-related action */
-                'NOTIFY_GA4_CART_ACTION_STARTS',
-
                 /* script insertion events */
                 'NOTIFY_HTML_HEAD_TAG_START',   //- **NEW**, must be just after the <head> tag in the template's html_header.php
                 'NOTIFY_FOOTER_END',            //- Just prior to the </body> tag in the template's tpl_main_page.php
@@ -148,23 +145,12 @@ class ga4_analytics extends base
         if (!isset($_SESSION['ga4_analytics'])) {
             $_SESSION['ga4_analytics'] = [];
         }
-        
+
         // -----
         // Overall processing switch, building up data for the to-be-rendered script loaded just
         // prior to the page's </body> tag.
         //
         switch ($eventId) {
-            // -----
-            // Issued by GA4 Analytics' extra_cart_action script when a cart-related action is going
-            // to be performed.  The cart's current contents are captured for use in handling any
-            // add-to-cart/remove-from-cart actions so that the cart's products don't need to be
-            // continually polled on multiple-add-to-cart processing.
-            //
-            case 'NOTIFY_GA4_CART_ACTION_STARTS':
-                $this->currentCartSaved = true;
-                $this->currentCart = $this->cartGetProducts();
-                break;
-
             // -----
             // Load the GA4 initialization script at the beginning of the page's <head>.
             //
@@ -414,8 +400,8 @@ class ga4_analytics extends base
 
             case 'NOTIFIER_CART_ADD_CART_START':
                 if ($this->currentCartSaved === false) {
-                    trigger_error('An "add_cart" request was received outside of an actionable event.  The "add_to_cart" GA4 event was not processed.', E_USER_WARNING);
-                    break;
+                    $this->currentCartSaved = true;
+                    $this->currentCart = $this->cartGetProducts();
                 }
                 $uprid = $this->getUprid($p2, $p4);
                 $this->productAdded = [
@@ -496,8 +482,8 @@ class ga4_analytics extends base
 
             case 'NOTIFIER_CART_REMOVE_START':
                if ($this->currentCartSaved === false) {
-                    trigger_error('A "remove" request was received outside of an actionable event.  The "remove_from_cart" GA4 event was not processed.', E_USER_WARNING);
-                    break;
+                    $this->currentCartSaved = true;
+                    $this->currentCart = $this->cartGetProducts();
                 }
                 $item = $this->getItemsInCart($p2);
                 if (empty($item)) {
@@ -515,8 +501,8 @@ class ga4_analytics extends base
 
             case 'NOTIFIER_CART_REMOVE_ALL_START':
                if ($this->currentCartSaved === false) {
-                    trigger_error('A "remove_all" request was received outside of an actionable event.  The "remove_from_cart" GA4 event was not processed.', E_USER_WARNING);
-                    break;
+                    $this->currentCartSaved = true;
+                    $this->currentCart = $this->cartGetProducts();
                 }
                 $cart_items = $this->getItemsInCart();
                 if ($cart_items === false) {

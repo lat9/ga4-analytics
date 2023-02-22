@@ -5,61 +5,61 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GA4 Analytics for Zen Cart 1.5.6b and Later</title>
 <style type="text/css">
-a, a:active, 
-a:visited { 
-    color: #006666; 
+a, a:active,
+a:visited {
+    color: #006666;
 }
-a:hover { 
-    color:#00CC99; 
+a:hover {
+    color:#00CC99;
 }
-body, 
-p, 
+body,
+p,
+h1,
+h2,
+h3,
+h4,
+li,
+td {
+    font-family: Verdana, AvantGarde, Tahoma, Arial, sans-serif;
+    font-size: 10pt;
+    color: black;
+    padding: 0px;
+    margin: 20px;
+}
+pre {
+    margin: 20px;
+}
 h1, 
 h2, 
 h3, 
-h4, 
-li, 
-td { 
-    font-family: Verdana, AvantGarde, Tahoma, Arial, sans-serif; 
-    font-size: 10pt; 
-    color: black; 
-    padding: 0px; 
-    margin: 20px; 
-}
-pre { 
-    margin: 20px; 
-}
-H1, 
-H2, 
-H3, 
-H4 { 
-    font-weight: bold 
+h4 { 
+    font-weight: bold
 }
 h1 { 
-    font-size: 20px; 
+    font-size: 20px;
 }
 h2 { 
-    font-size: 16px; 
+    font-size: 16px;
     border-top: 1px solid black;
     padding-top: 5px;
 }
-ol li, 
+ol li,
 ul li { 
-    margin: 5px 0; 
+    margin: 5px 0;
 }
-.corefile, 
-.impt { 
-    color: red; 
+.corefile,
+.impt {
+    color: red;
 }
-.added { 
-    color: blue; 
+.added {
+    color: blue;
 }
-img { 
-    margin-left: 20px; 
-    max-width: 95%; 
+img {
+    margin-left: 20px;
+    max-width: 95%;
 }
-.removed { 
-    text-decoration: line-through; 
+.removed {
+    text-decoration: line-through;
 }
 .smaller {
     font-size: smaller;
@@ -138,7 +138,7 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
         <li>Unzip this distribution's zip-file; you'll see the following files and directories:<ol type="a">
             <li>/includes/auto_loaders/config.ga4_analytics.php</li>
             <li>/includes/classes/observers/class.ga4_analytics.php</li>
-            <li>/includes/extra_cart_actions/ga4_analytics_actions.php</li>
+            <li><span class="removed">/includes/extra_cart_actions/ga4_analytics_actions.php</span> <span class="smaller">(Removed in v1.1.0)</span></li>
             <li>/includes/languages/english/extra_definitions/ga4_analytics_extra_definitions.php</li>
             <li>/includes/templates/template_default/jscript/ga4_analytics_events_script.php</li>
             <li>/includes/templates/template_default/jscript/ga4_analytics_start_script.php</li>
@@ -573,13 +573,15 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
     <p>These sections identify the GA4 Analytics changes as well as the change-history associated with the EC Analytics plugin, on which it's based.</p>
     <h3>GA4 Analytics Version History</h3>
     <ul>
-        <li>v1.1.0, 2023-01-01 (lat9)<ul>
+        <li>v1.1.0-beta2, 2023-02-22 (lat9)<ul>
             <li>If &quot;dual tagging&quot; is enabled, use the <code>group</code> parameter on the <code>config</code> tag and include a <code>send_to</code> parameter on each GA4 event sent.  The group name used is <code>GA4</code>.</li>
             <li>Enable a site to limit the IP addresses for which the <em>Debug Mode</em> is enabled.</li>
             <li>Add a configuration switch, allowing a store to choose between the <code>products_model</code> and the <code>products_id</code> for the value of any item's <code>item_id</code>.</li>
             <li>Correct products' listing; the model number wasn't available at the time of the original notification.</li>
-            <li>The following files were changes:<ol>
+            <li>Correct cart-related actions, saving current contents whenever the first add/remove event is received for a page; enables use of non-core cart actions.</li>
+            <li>The following files were changed or <span class="removed">removed</span>:<ol>
                 <li>/includes/classes/observers/class.ga4_analytics.php</li>
+                <li><span class="removed">/includes/extra_cart_actions/ga4_analytics_actions.php</span></li>
                 <li>/includes/templates/template_default/jscript/ga4_analytics_start_script.php</li>
                 <li>/includes/templates/template_default/jscript/ga4_analytics_event_script.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_ga4_analytics_admin.php</li>
@@ -588,7 +590,7 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
         <li>v1.0.1, 2022-12-21 (lat9)<ul>
             <li>Alert the admin of a &quot;Measuring ID&quot; rather than filling up the logs sub-directory!</li>
             <li>Enable a site to do &quot;dual tagging&quot; with a previously set-up <em>Universal Analytics</em> tag.</li>
-            <li>The following files were changes:<ol>
+            <li>The following files were changed:<ol>
                 <li>/includes/classes/observers/class.ga4_analytics.php</li>
                 <li>/includes/templates/template_default/jscript/ga4_analytics_start_script.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_ga4_analytics_admin.php</li>
