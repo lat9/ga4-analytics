@@ -25,6 +25,7 @@ class ga4_analytics extends base
         $productAdded = false,      //- Information about a product being added to the cart, an array containing the uprid and quantity on entry; false otherwise.
         $currentCartSaved = false,  //- Identifies that the $currentCart value reflects the customer's cart's current contents.
         $currentCart = false,       //- Contains the current cart's products' info, set on a cart-related action.
+        $currency_decimal_places,   //- The number of decimal places associated with the session's current currency
         $useModelAsItemId = true;   //- Indicates whether the product's model should be used for any 'item_id' values; if not, then the 'products_id' is used instead.
 
     function __construct()
@@ -72,6 +73,10 @@ class ga4_analytics extends base
         $this->enabled = true;
         $this->measurement_id = GA4_ANALYTICS_TRACKING_ID;
         $this->useModelAsItemId = (defined('GA4_ANALYTICS_ITEM_ID_VALUE') && GA4_ANALYTICS_ITEM_ID_VALUE === 'products_model');
+
+        global $currencies;
+        $this->currency_decimal_places = $currencies->currencies[$_SESSION['currency']]['decimal_places'];
+
         $this->attach(
             $this,
             [
@@ -233,10 +238,14 @@ class ga4_analytics extends base
                     ];
                 } else {
                     switch ($current_page_base) {
+                        // -----
+                        // The 'true' parameter to the getCheckoutParameters method indicates
+                        // that the cart's total (not the current order's total) should be used.
+                        //
                         case FILENAME_CHECKOUT_SHIPPING:
                             $_SESSION['ga4_analytics'][] = [
                                 'event' => 'begin_checkout',
-                                'parameters' => $this->getCheckoutParameters(),
+                                'parameters' => $this->getCheckoutParameters(true),
                             ];
                             break;
 
@@ -564,7 +573,7 @@ class ga4_analytics extends base
                 }
                 $parameters = [
                     'currency' => $order_summary['currency_code'],
-                    'transaction_id' => $order_summary['order_number'],
+                    'transaction_id' => (string)$order_summary['order_number'],
                     'value' => $this->formatCurrency($order_summary['order_total']),
                     'shipping' => $this->formatCurrency($order_summary['shipping']),
                     'tax' => $this->formatCurrency($order_summary['tax']),
@@ -627,7 +636,7 @@ class ga4_analytics extends base
 
     protected function formatCurrency($value)
     {
-        return number_format((float)$value, 2, '.', '');
+        return round((float)$value, $this->currency_decimal_places);
     }
 
     protected function getItemCategories($products_id, $cPath_array = null)
@@ -803,15 +812,16 @@ class ga4_analytics extends base
         return $items;
     }
 
-    protected function getCheckoutParameters()
+    protected function getCheckoutParameters($use_cart_total = false)
     {
         global $db, $order;
 
         $checkout_parameters = [
             'currency' => $_SESSION['currency'],
-            'value' => $this->formatCurrency($order->info['total']),
             'items' => $this->getItemsInOrder(),
         ];
+        $checkout_value = ($use_cart_total === false) ? $order->info['total'] : $_SESSION['cart']->show_total();
+        $checkout_parameters['value'] = $this->formatCurrency($checkout_value);
         if (isset($_SESSION['cc_id'])) {
             $coupon = $db->Execute(
                 "SELECT coupon_code
@@ -837,7 +847,7 @@ class ga4_analytics extends base
         $items = [];
         foreach ($order->products as $product) {
             $item = [
-                'item_name' => $product['name'],
+                'item_name' => zen_clean_html($product['name']),
                 'currency' => $_SESSION['currency'],
                 'quantity' => $product['qty'],
                 'price' => $this->formatCurrency($product['final_price']),
@@ -945,7 +955,7 @@ class ga4_analytics extends base
     protected function createItemFromCartItem($cart_item)
     {
         $item = [
-            'name' => $cart_item['name'],
+            'name' => zen_clean_html($cart_item['name']),
             'currency' => $_SESSION['currency'],
             'quantity' => $cart_item['quantity'],
             'price' => $this->formatCurrency($cart_item['final_price']),

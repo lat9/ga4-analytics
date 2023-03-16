@@ -413,7 +413,7 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
             </tr>
             <tr>
                 <td>value</td>
-                <td>The order's overall value, <code>$order->info['total']</code>, converted to a 2-decimal numeric value.</td>
+                <td>The order's overall value, either <code>$_SESSION['cart']->show_total()</code> on the checkout_shipping page or <code>$order->info['total']</code> on all other checkout-related pages, converted to a 2-decimal numeric value. For all events <em>other than</em> <code>start_checkout</code>, the <code>value</code> also includes any applicable tax.</td>
             </tr>
             <tr>
                 <td>coupon</td>
@@ -579,6 +579,7 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
             <li>Add a configuration switch, allowing a store to choose between the <code>products_model</code> and the <code>products_id</code> for the value of any item's <code>item_id</code>.</li>
             <li>Correct products' listing; the model number wasn't available at the time of the original notification.</li>
             <li>Correct cart-related actions, saving current contents whenever the first add/remove event is received for a page; enables use of non-core cart actions.</li>
+            <li>Correct parameter type, i.e. string vs. number, for various event parameters.</li>
             <li>The following files were changed or <span class="removed">removed</span>:<ol>
                 <li>/includes/classes/observers/class.ga4_analytics.php</li>
                 <li><span class="removed">/includes/extra_cart_actions/ga4_analytics_actions.php</span></li>
