@@ -191,7 +191,22 @@ class ga4_analytics extends base
                 // The attributes on a product's details page are rendered during the
                 // templating stage, so they're not available until this point.
                 //
-                if (substr($current_page_base, -5) === '_info') {
+                // Check first to see that we're on a product's information page.  We are if
+                // 1. There's a 'products_id' parameter specified in the URL.
+                // 2. The product's information page is the current page.
+                // 3. The product has been found to be valid; otherwise, the information page's
+                //    main_template_vars.php has set $tpl_page_body to indicate that the product's
+                //    not found.
+                //
+                $product_info_page = false;
+                if (!empty($_GET['products_id'])) {
+                    global $tpl_page_body;
+                    $product_info_page = zen_get_info_page($_GET['products_id']);
+                    if ($current_page_base !== $product_info_page || $tpl_page_body === '/tpl_product_info_noproduct.php') {
+                        $product_info_page = false;
+                    }
+                }
+                if ($current_page_base === $product_info_page) {
                     global $product_info, $products_id_current, $cPath_array, $options_name, $options_html_id;
 
                     // -----

@@ -584,6 +584,8 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
             <li>BUGFIX: Need to load the GA4 class <em>after</em> the currencies have been instantiated, since that's a pre-requisite.</li>
             <li>CHANGE: Update to provide measurements via either the GA4 (gtag.js) or GTM (gtm.js) interface.</li>
             <li>BUGFIX: Don't log a PHP Warning when the required notification isn't present.</li>
+            <li>BUGFIX: Correct detection of a product's information for the <code>view_item</code> event.</li>
+            <li>BUGFIX: Don't add a <code>view_item</code> event if the product isn't found.</li>
             <li>The following files were changed or <span class="removed">removed</span>:<ol>
                 <li>/includes/auto_loaders/config.ga4_analytics.php</li>
                 <li>/includes/classes/observers/class.ga4_analytics.php</li>
