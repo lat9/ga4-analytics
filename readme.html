@@ -91,7 +91,7 @@ table table {
 
 <body>
     <h1>GA4 Analytics for Zen Cart v1.5.6b and later, including v1.5.8a</h1>
-    <h3>Version 1.1.1</h3>
+    <h3>Version 1.2.0</h3>
     <p>Current Support Thread at Zen Cart Forums: <a href="https://www.zen-cart.com/showthread.php?229367-GA-4-Analytics-Support-Thread" target="_blank">https://www.zen-cart.com/showthread.php?229367-GA-4-Analytics-Support-Thread</a></p>
     <p>Zen Cart Download Link: <a href="https://www.zen-cart.com/downloads.php?do=file&id=2368" target="_blank">https://www.zen-cart.com/downloads.php?do=file&id=2368</a></p>
     <p>GitHub repository: <a href="https://github.com/lat9/ga4-analytics" target="_blank">https://github.com/lat9/ga4-analytics</a></p>
@@ -113,6 +113,7 @@ table table {
 
     <h2>Purpose</h2>
     <p>This module utilizes the <em>Google Analytics 4</em> API, based on that API's documentation as of December 2022. It records all of your store sales data for viewing from your Google Analytics Account (which must be created before installing this module).  You'll need to create your site's &quot;GA4 Measuring ID&quot; (e.g. <code>G-xxxxxxxx</code>) before the plugin will start its measurements.  Refer to <a href="https://support.google.com/analytics/answer/10089681?utm_source=developers.google.com&utm_medium=referral" target="_blank">this</a> GA4 documentation link for additional information.</p>
+    <p>Starting with v1.2.0 of <em>GA-4 Analytics</em>, you can also use your Google Tag Manager Measurement ID; you'll need to connect your <code>GTM-</code> ID to any <code>G-</code> ID to use the GA-4 dataLayer pushes.</p>
 
     <h2>Installation and Upgrade</h2>
     <p><b>Before you start &hellip;</b></p>
@@ -139,7 +140,7 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
         <li>Unzip this distribution's zip-file; you'll see the following files and directories:<ol type="a">
             <li>/includes/auto_loaders/config.ga4_analytics.php</li>
             <li>/includes/classes/observers/class.ga4_analytics.php</li>
-            <li><span class="removed">/includes/extra_cart_actions/ga4_analytics_actions.php</span> <span class="smaller">(Removed in v1.1.0)</span></li>
+            <li><span class="removed">/includes/extra_cart_actions/ga4_analytics_actions.php</span> <span class="smaller">(Removed in v1.2.0)</span></li>
             <li>/includes/languages/english/extra_definitions/ga4_analytics_extra_definitions.php</li>
             <li>/includes/templates/template_default/jscript/ga4_analytics_events_script.php</li>
             <li>/includes/templates/template_default/jscript/ga4_analytics_start_script.php</li>
@@ -171,7 +172,7 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
             </tr>
             <tr>
                 <td>GA4 Analytics Measuring ID</td>
-                <td>Enter the GA4 Analytics <em>Measuring ID</em> provided to you when you registered your site with google.  That ID will start with <code>G-</code>.  Set this value to an empty string (the default) to disable the <em>GA4 Analytics</em> plugin.</td>
+                <td>>Enter either the GA4 Analytics <em>Measuring ID</em> or the Google Tag Manager <em>container ID</em> provided to you when you registered your site with google. The GA4 ID starts with <code>G-</code> while the GTM ID starts with <code>GTM-</code>.  Set this value to an empty string (the default) to disable the <em>GA4 Analytics</em> plugin.</td>
                 <td class="text-center">&mdash;</td>
             </tr>
             <tr>
@@ -189,6 +190,11 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
                 <td>When products are included in GA4 events, what value should be used for the <code>item_id</code> parameter?  If you choose <code>products_id</code>, a plugin-specific <code>item_model</code> parameter will be included, containing the product's model (if that value is not empty).  Default: <code>products_model</code>.</td>
                 <td class="text-center">v1.1.0</td>
             </tr>
+            <tr id="choose-model-field">
+                <td>Choose <code>products_model</code> Field Name</td>
+                <td>If you chose <code>products_id</code> for the setting above, identify the name of the event field into which the <code>products_model</code> should be placed.  The default (<code>ep.item_model</code>) might be &quot;difficult&quot; to see in your Google Management Console.  Some alternate suggestions, reusing built-in GA4 fields are <code>item_list_id</code> and <code>item_list_name</code>. Default: <code>ep.item_model</code>.</td>
+                <td class="text-center">v1.2.0</td>
+            </tr>
             <tr>
                 <td>Enable Debug Mode?</td>
                 <td>Should <b>all</b> GA4 events be sent in <code>debug_mode</code>?  This can be used to help you debug your GA4 installation.  See <a href="https://support.google.com/analytics/answer/7201382?hl=en" target="_blank">this</a> Google documentation for additional information.  When set to <b>true</b>, the <em>GA4 Analytics</em> plugin automatically adds the <code>debug_mode</code> parameter on each of the events that it sends.  Default: <b>false</b>.</td>
@@ -203,7 +209,7 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
     </table>
 
     <h2>GA4 Events Measured</h2>
-    <p>This section identifies the <em>GA4/gtag</em> events monitored by this plugin; see <a href="https://developers.google.com/analytics/devguides/collection/ga4/reference/events?client_type=gtag" target="_blank">this</a> Google documentation for the supported events and their basic parameters.</p>
+    <p>This section identifies the <em>GA4/gtag</em> events monitored by this plugin; see <a href="https://developers.google.com/analytics/devguides/collection/ga4/reference/events?client_type=gtag" target="_blank">this</a> Google documentation for the supported events and their basic parameters.  When you are using the plugin in <em>GTM</em> mode, <a href="https://developers.google.com/analytics/devguides/collection/ga4/reference/events?client_type=gtm" target="_blank">this</a> section of the documented interface applies instead.</p>
     <p><b>Notes:</b></p>
     <ol>
         <li>One-time charges for products' pricing are <em>not</em> included (other than an order or cart event that includes an overall price).  There is no provision within the GA4 event schema to include those values on an individual product basis.</li>
@@ -245,11 +251,11 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
                         </tr>
                         <tr>
                             <td>item_id</td>
-                            <td>Starting with v1.1.0, contains either the <code>products_id</code> or the <code>products_model</code> (if not blank), depending on the site's <a href="#choose-item-id">specification</a> of the <code>item_id</code> contents.</td>
+                            <td>Starting with v1.1.0, contains either the <code>products_id</code> or the <code>products_model</code> (if not blank), depending on the site's <a href="#choose-item-id">configuration</a> of the <code>item_id</code> contents.</td>
                         </tr>
                         <tr>
-                            <td>item_model</td>
-                            <td>Starting with v1.1.0, present <em>only if</em> the <code>item_id</code> contains the product's ID value and the product's model-number is not blank.</td>
+                            <td><em>{variable}</em></td>
+                            <td>Starting with v1.2.0, present <em>only if</em> the <code>item_id</code> contains the product's ID value, the product's model-number is not blank and the site's <a href="choose-model-field">configuration</a> for the products' model field name is not blank.  The value identified in the model-field-name is used as the parameter name.</td>
                         </tr>
                         <tr>
                             <td>brand</td>
@@ -355,8 +361,8 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
                             <td>Starting with v1.1.0, contains either the <code>products_id</code> or the <code>products_model</code> (if not blank), depending on the site's <a href="#choose-item-id">specification</a> of the <code>item_id</code> contents.</td>
                         </tr>
                         <tr>
-                            <td>item_model</td>
-                            <td>Starting with v1.1.0, present <em>only if</em> the <code>item_id</code> contains the product's ID value and the product's model-number is not blank.</td>
+                            <td><em>{variable}</em></td>
+                            <td>Starting with v1.2.0, present <em>only if</em> the <code>item_id</code> contains the product's ID value, the product's model-number is not blank and the site's <a href="choose-model-field">configuration</a> for the products' model field name is not blank.  The value identified in the model-field-name is used as the parameter name.</td>
                         </tr>
                         <tr>
                             <td>brand</td>
@@ -451,8 +457,8 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
                             <td>Starting with v1.1.0, contains either the <code>products_id</code> or the <code>products_model</code> (if not blank), depending on the site's <a href="#choose-item-id">specification</a> of the <code>item_id</code> contents.</td>
                         </tr>
                         <tr>
-                            <td>item_model</td>
-                            <td>Starting with v1.1.0, present <em>only if</em> the <code>item_id</code> contains the product's ID value and the product's model-number is not blank.</td>
+                            <td><em>{variable}</em></td>
+                            <td>Starting with v1.2.0, present <em>only if</em> the <code>item_id</code> contains the product's ID value, the product's model-number is not blank and the site's <a href="choose-model-field">configuration</a> for the products' model field name is not blank.  The value identified in the model-field-name is used as the parameter name.</td>
                         </tr>
                         <tr>
                             <td>brand</td>
@@ -574,10 +580,14 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
     <p>These sections identify the GA4 Analytics changes as well as the change-history associated with the EC Analytics plugin, on which it's based.</p>
     <h3>GA4 Analytics Version History</h3>
     <ul>
-        <li>v1.1.1-beta1, 2023-03-29 (lat9)<ul>
+        <li>v1.2.0-beta1, 2023-04-04 (lat9)<ul>
             <li>Need to load the GA4 class <em>after</em> the currencies have been instantiated, since that's a pre-requisite.</li>
+            <li>Update to provide measurements via either the GA4 (gtag.js) or GTM (gtm.js) interface.</li>
             <li>The following files were changed or <span class="removed">removed</span>:<ol>
                 <li>/includes/auto_loaders/config.ga4_analytics.php</li>
+                <li>/includes/classes/observers/class.ga4_analytics.php</li>
+                <li>/includes/templates/template_default/jscript/ga4_analytics_start_script.php</li>
+                <li>/includes/templates/template_default/jscript/ga4_analytics_event_script.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_ga4_analytics_admin.php</li>
             </ol></li>
         </ul></li>

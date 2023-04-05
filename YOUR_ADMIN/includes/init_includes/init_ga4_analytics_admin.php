@@ -3,7 +3,7 @@
 // Part of the "GA4 Analytics" plugin, created by lat9 (https://vinosdefrutastropicales.com)
 // Copyright (c) 2022-2023, Vinos de Frutas Tropicales.
 //
-define('GA4_ANALYTICS_CURRENT_VERSION', '1.1.1-beta1');
+define('GA4_ANALYTICS_CURRENT_VERSION', '1.2.0-beta1');
 
 // -----
 // Wait until an admin is logged in before installing or updating ...
@@ -93,6 +93,28 @@ if (GA4_ANALYTICS_VERSION !== GA4_ANALYTICS_CURRENT_VERSION) {
                     ('Debug Mode, IP List', 'GA4_ANALYTICS_DEBUG_IP_LIST', '', 'If you want to enable <em>Debug Mode</em> for only certain IP addresses, enter those IP addresses here, using a comma-separated list (intervening spaces are OK).  Leave this field empty (the default) and the <em>Debug Mode</em> applies to <b>all</b> IP addresses.<br>', $cgi, now(), 505, NULL, NULL)"
             );
 
+        case version_compare(GA4_ANALYTICS_VERSION, '1.2.0', '<'):      //-Fall through from above processing ...
+            $db->Execute(
+                "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
+                    (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, date_added, sort_order, use_function, set_function)
+                 VALUES
+                    ('Choose <code>products_model</code> Field Name', 'GA4_ANALYTICS_ITEM_MODEL_FIELD', 'ep.item_model', 'If you chose <code>products_id</code> for the setting above, identify the name of the event field into which the <code>products_model</code> should be placed.  The default (<code>ep.item_model</code>) might be &quot;difficult&quot; to see in your Google Management Console.  Some alternate suggestions, reusing built-in GA4 fields are <code>item_list_id</code> and <code>item_list_name</code>.<br>', $cgi, now(), 30, NULL, NULL)"
+            );
+            $db->Execute(
+                "UPDATE " . TABLE_CONFIGURATION . "
+                    SET last_modified = now(),
+                        configuration_description = '<br>When products are included in GA4 events, what value should be used for the <code>item_id</code> parameter?  If you choose <code>products_id</code>, the product\'s model (if that value is not empty) is placed into the field name you identify below. Default: <code>products_model</code>.'
+                  WHERE configuration_key = 'GA4_ANALYTICS_ITEM_ID_VALUE'
+                  LIMIT 1"
+            );
+            $db->Execute(
+                "UPDATE " . TABLE_CONFIGURATION . "
+                    SET last_modified = now(),
+                        configuration_description = '<br>Enter either the GA4 Analytics <em>Measuring ID</em> or the Google Tag Manager <em>container ID</em> provided to you when you registered your site with google. The GA4 ID starts with <code>G-</code> while the GTM ID starts with <code>GTM-</code>.  Set this value to an empty string (the default) to disable the <em>GA4 Analytics</em> plugin.<br>'
+                  WHERE configuration_key = 'GA4_ANALYTICS_TRACKING_ID'
+                  LIMIT 1"
+            );
+
         default:            //-Fall through from above processing ...
             break;
     }
@@ -119,7 +141,7 @@ if ($current_page === (FILENAME_CONFIGURATION . '.php') && isset($_GET['gID']) &
            FROM " . TABLE_CONFIGURATION . "
           WHERE configuration_key = 'GA4_ANALYTICS_TRACKING_ID'"
     );
-    if (!$ga4_check->EOF && $ga4_check->fields['configuration_value'] !== '' && strpos($ga4_check->fields['configuration_value'], 'G-') !== 0) {
+    if (!$ga4_check->EOF && $ga4_check->fields['configuration_value'] !== '' && (strpos($ga4_check->fields['configuration_value'], 'G-') !== 0 && strpos($ga4_check->fields['configuration_value'], 'GTM-') !== 0)) {
         $messageStack->add(GA4_ANALYTICS_INVALID_TAG_ERROR, 'error');
     }
 }

@@ -1,9 +1,9 @@
 <?php 
 // -----
 // Part of the "GA4 Analytics" plugin, created by lat9 (https://vinosdefrutastropicales.com)
-// Copyright (c) 2022, Vinos de Frutas Tropicales.
+// Copyright (c) 2022-2023, Vinos de Frutas Tropicales.
 //
-// Last updated: v1.1.0
+// Last updated: v1.2.0
 //
 // This script is loaded based on a notification that a page's <head> tag has been rendered by
 // /includes/classes/observers/class.ga4_analytics.php, so long as the GA4 Analytics is currently
@@ -19,27 +19,78 @@
 //
 global $ga4_group_name;
 
+//-bof-20230131-lat9-GitHub#288: Commenting out 'groups' for now.
+// -----
+// NOTE: Setting $ga4_group_name to an empty string, needed for the events' script.
+//
+$ga4_group_name = '';
+$ga4_config_parameters = [];
+/*
 $ga4_group_name = 'GA4';
 $ga4_config_parameters = [
     'groups' => $ga4_group_name,
 ];
+*/
+//-eof-20230131-lat9
 
 if (zen_is_logged_in() && !zen_in_guest_checkout()) {
     $ga4_config_parameters['user_id'] = (string)$_SESSION['customer_id'];
 }
+
+// -----
+// If processing in 'base' GA-4 analytics mode, i.e. the measurement ID starts with 'G-', use the
+// gtag.js implementation.
+//
+if ($ga4_measurement_type === 'GA4') {
 ?>
 <!-- Google tag (gtag.js) -->
- <script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo $ga4_measurement_id; ?>"></script>
- <script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo $ga4_measurement_id; ?>"></script>
+<script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
 <?php
-if (defined('GA4_ANALYTICS_TRACKING_ID_UA') && strpos(GA4_ANALYTICS_TRACKING_ID_UA, 'UA-') === 0) {
+    if (defined('GA4_ANALYTICS_TRACKING_ID_UA') && strpos(GA4_ANALYTICS_TRACKING_ID_UA, 'UA-') === 0) {
 ?>
     gtag('config', '<?php echo GA4_ANALYTICS_TRACKING_ID_UA; ?>');
 <?php
-}
+    }
+
+//-bof-20230131-lat9-GitHub#288: Configuration parameters might be empty, don't include in this case.
+    $ga4_json_parameters = '';
+    if ($ga4_config_parameters !== []) {
+        $ga4_json_parameters = ', ' . json_encode($ga4_config_parameters);
+    }
 ?>
-    gtag('config', '<?php echo $ga4_measurement_id; ?>', <?php echo json_encode($ga4_config_parameters); ?>);
+    gtag('config', '<?php echo $ga4_measurement_id; ?>'<?php echo $ga4_json_parameters; ?>);
+<?php
+//-eof-20230131-lat9
+?>
 </script>
+<?php
+// -----
+// Otherwise, processing in GTM analytics mode, i.e. the measurement ID starts with 'GTM-', so use the
+// gtm.js implementation.
+//
+} else {
+?>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    dataLayer.push({ ecommerce: null });
+<?php
+    // -----
+    // If any session-based events are waiting to be pushed to the dataLayer, push them now.
+    //
+    if (!empty($_SESSION['ga4_analytics'])) {
+        $ga4_script_tag_required = false;
+        require $template->get_template_dir('ga4_analytics_events_script.php', DIR_WS_TEMPLATE, $current_page_base, 'jscript') . '/ga4_analytics_events_script.php';
+    }
+?>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','<?php echo $ga4_measurement_id; ?>');
+</script>
+<?php
+}

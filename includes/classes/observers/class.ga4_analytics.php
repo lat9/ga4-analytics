@@ -3,7 +3,7 @@
 // Part of the "GA4 Analytics" plugin, created by lat9 (https://vinosdefrutastropicales.com)
 // Copyright (c) 2022-2023, Vinos de Frutas Tropicales.
 //
-// Last updated: v1.1.0
+// Last updated: v1.2.0
 //
 // Based on:
 /**
@@ -16,9 +16,10 @@
  */
 class ga4_analytics extends base
 {
-    public
+    protected
         $isConfigured = false,      //- Indicates whether or not the plugin is configured.
         $enabled = false,           //- Indicates whether or not the plugin is enabled; it can be disabled via external call.
+        $isGtmAnalytics,            //- Indicates whether we're running in "GTM" (true) to "GA4" (false) mode.
         $initialized = false,       //- Indicates that the GA4 initialization script has not yet been loaded.
         $measurement_id,            //- The GA4 measurement ID, copied from the configuration.
         $canShowPrices,             //- Indicates whether prices can be included, based on the store status and customer authorization
@@ -33,7 +34,7 @@ class ga4_analytics extends base
         // -----
         // If the configuration's not yet set or the measurement ID doesn't start with 'G-', nothing further to be done.
         //
-        if (!defined('GA4_ANALYTICS_TRACKING_ID') || strpos(GA4_ANALYTICS_TRACKING_ID, 'G-') !== 0) {
+        if (!defined('GA4_ANALYTICS_TRACKING_ID') || (strpos(GA4_ANALYTICS_TRACKING_ID, 'G-') !== 0 && strpos(GA4_ANALYTICS_TRACKING_ID, 'GTM-') !== 0)) {
             return;
         }
 
@@ -43,6 +44,11 @@ class ga4_analytics extends base
         if (!defined('GA4_ANALYTICS_VARIANT_SEPARATOR')) {
             define('GA4_ANALYTICS_VARIANT_SEPARATOR', ' / ');
         }
+
+        // -----
+        // Set the flag to indicate whether we're operating in GTM (gtm.js) or GA4 (gtag.js) mode.
+        //
+        $this->isGtmAnalytics = (strpos(GA4_ANALYTICS_TRACKING_ID, 'GTM-') === 0);
 
         // -----
         // Determine whether pricing is to be included when products are viewed.
@@ -164,6 +170,7 @@ class ga4_analytics extends base
 
                 $this->initialized = true;
                 $ga4_measurement_id = $this->measurement_id;
+                $ga4_measurement_type = ($this->isGtmAnalytics === true) ? 'GTM' : 'GA4';
                 require $template->get_template_dir('ga4_analytics_start_script.php', DIR_WS_TEMPLATE, $current_page_base, 'jscript') . '/ga4_analytics_start_script.php';
                 break;
 
@@ -324,6 +331,8 @@ class ga4_analytics extends base
                     }
                 }
 
+                $ga4_measurement_type = ($this->isGtmAnalytics === true) ? 'GTM' : 'GA4';
+                $ga4_script_tag_required = true;
                 require $template->get_template_dir('ga4_analytics_events_script.php', DIR_WS_TEMPLATE, $current_page_base, 'jscript') . '/ga4_analytics_events_script.php';
                 break;
 
@@ -634,9 +643,9 @@ class ga4_analytics extends base
         return $cart_products;
     }
 
-    protected function formatCurrency($value)
+    public function formatCurrency($value)
     {
-        return round((float)$value, $this->currency_decimal_places);
+        return number_format((float)$value, $this->currency_decimal_places, '.', '');
     }
 
     protected function getItemCategories($products_id, $cPath_array = null)
@@ -756,9 +765,9 @@ class ga4_analytics extends base
     }
 
     // -----
-    // Starting with v1.1.0, a site can specify whether the products_model or $products_id is to
+    // Starting with v1.1.0, a site can specify whether the products_model or products_id is to
     // be sent as an 'item_id'.  If the products_id is being used and the products_model is not
-    // empty, a customized ep.item_model parameter is included.
+    // empty, the model number is included in the field identified in the plugin's configuration settings.
     //
     protected function getItemIdAndModel($products_id, $products_model)
     {
@@ -768,13 +777,9 @@ class ga4_analytics extends base
                 $id_and_model['item_id'] = $products_model;
             }
         } else {
-            // -----
-            // See this (https://www.simoahava.com/analytics/implementation-guide-events-google-analytics-4/) article
-            // that described GA4 custom-event naming.  An 'ep.' prefix is for a string value, 'epn.' is for a numeric value.
-            //
             $id_and_model['item_id'] = $products_id;
-            if (!empty($products_model)) {
-                $id_and_model['ep.item_model'] = $products_model;
+            if (!empty($products_model) && defined('GA4_ANALYTICS_ITEM_MODEL_FIELD') && GA4_ANALYTICS_ITEM_MODEL_FIELD !== '') {
+                $id_and_model[GA4_ANALYTICS_ITEM_MODEL_FIELD] = $products_model;
             }
         }
         return $id_and_model;
