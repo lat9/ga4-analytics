@@ -176,14 +176,14 @@ class ga4_analytics extends base
 
             // -----
             // Load the GA4 script that outputs any events associated with the current page.  If
-            // the previous notification wasn't received, a PHP error results, since the site hasn't
-            // added the required notification to the template's html_header.php.
+            // the previous notification wasn't received, the site hasn't
+            // added the required notification to the template's html_header.php and nothing can
+            // be output.
             //
             case 'NOTIFY_FOOTER_END':
                 global $template, $current_page_base;
 
                 if ($this->initialized === false) {
-                    trigger_error('Missing NOTIFY_HTML_HEAD_TAG_START notification; GA4 Analytics cannot proceed.', E_USER_WARNING);
                     break;
                 }
 
