@@ -17,9 +17,8 @@
 // this (https://developers.google.com/analytics/devguides/collection/ga4/user-id/?platform=websites) google
 // documentation for additional information.
 //
-global $ga4_group_name;
+global $ga4_group_name, $zco_notifier;
 
-//-bof-20230131-lat9-GitHub#288: Commenting out 'groups' for now.
 // -----
 // NOTE: Setting $ga4_group_name to an empty string, needed for the events' script.
 //
@@ -31,11 +30,11 @@ $ga4_config_parameters = [
     'groups' => $ga4_group_name,
 ];
 */
-//-eof-20230131-lat9
 
 if (zen_is_logged_in() && !zen_in_guest_checkout()) {
     $ga4_config_parameters['user_id'] = (string)$_SESSION['customer_id'];
 }
+$zco_notifier->notify('NOTIFY_GA4_START_CONFIG_PARAMETERS', [], $ga4_config_parameters);
 
 // -----
 // If processing in 'base' GA-4 analytics mode, i.e. the measurement ID starts with 'G-', use the
@@ -56,16 +55,12 @@ if ($ga4_measurement_type === 'GA4') {
 <?php
     }
 
-//-bof-20230131-lat9-GitHub#288: Configuration parameters might be empty, don't include in this case.
     $ga4_json_parameters = '';
     if ($ga4_config_parameters !== []) {
         $ga4_json_parameters = ', ' . json_encode($ga4_config_parameters);
     }
 ?>
     gtag('config', '<?php echo $ga4_measurement_id; ?>'<?php echo $ga4_json_parameters; ?>);
-<?php
-//-eof-20230131-lat9
-?>
 </script>
 <?php
 // -----
@@ -78,6 +73,20 @@ if ($ga4_measurement_type === 'GA4') {
     window.dataLayer = window.dataLayer || [];
     dataLayer.push({ ecommerce: null });
 <?php
+    // -----
+    // If a customer is logged in, push the user_id to the dataLayer. See
+    // https://developers.google.com/analytics/devguides/collection/ga4/user-id?client_type=gtm
+    // for details.
+    //
+    // Also push any site-specific 'global' parameters defined.
+    //
+    foreach ($ga4_config_parameters as $key => $value) {
+?>
+    dataLayer.push({
+        '<?php echo $key; ?>': '<?php echo $value; ?>'
+    });
+<?php
+    }
     // -----
     // If any session-based events are waiting to be pushed to the dataLayer, push them now.
     //
