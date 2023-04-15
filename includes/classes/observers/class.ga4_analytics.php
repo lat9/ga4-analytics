@@ -975,7 +975,7 @@ class ga4_analytics extends base
     protected function createItemFromCartItem($cart_item)
     {
         $item = [
-            'name' => zen_clean_html($cart_item['name']),
+            'item_name' => zen_clean_html($cart_item['name']),
             'currency' => $_SESSION['currency'],
             'quantity' => $cart_item['quantity'],
             'price' => $this->formatCurrency($cart_item['final_price']),

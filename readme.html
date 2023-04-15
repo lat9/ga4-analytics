@@ -580,13 +580,14 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
     <p>These sections identify the GA4 Analytics changes as well as the change-history associated with the EC Analytics plugin, on which it's based.</p>
     <h3>GA4 Analytics Version History</h3>
     <ul>
-        <li>v1.2.0-beta1, 2023-04-04 (lat9)<ul>
+        <li>v1.2.0-beta2, 2023-04-15 (lat9)<ul>
             <li>BUGFIX: Need to load the GA4 class <em>after</em> the currencies have been instantiated, since that's a pre-requisite.</li>
             <li>CHANGE: Update to provide measurements via either the GA4 (gtag.js) or GTM (gtm.js) interface.</li>
             <li>BUGFIX: Don't log a PHP Warning when the required notification isn't present.</li>
             <li>BUGFIX: Correct detection of a product's information for the <code>view_item</code> event.</li>
             <li>BUGFIX: Don't add a <code>view_item</code> event if the product isn't found.</li>
             <li>CHANGE: Add 'user_id' for GTM path and enable site-specific 'global' parameters to be pushed.</li>
+            <li>BUGFIX: Correct parameter name for item's name for shopping-cart items; was missing <code>item_</code> prefix.</li>
             <li>The following files were changed or <span class="removed">removed</span>:<ol>
                 <li>/includes/auto_loaders/config.ga4_analytics.php</li>
                 <li>/includes/classes/observers/class.ga4_analytics.php</li>
