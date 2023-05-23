@@ -3,7 +3,7 @@
 // Part of the "GA4 Analytics" plugin, created by lat9 (https://vinosdefrutastropicales.com)
 // Copyright (c) 2022-2023, Vinos de Frutas Tropicales.
 //
-// Last updated: v1.2.0
+// Last updated: v1.2.1
 //
 // Based on:
 /**
@@ -96,10 +96,6 @@ class ga4_analytics extends base
                 'NOTIFY_HEADER_END_PRODUCT_FREE_SHIPPING_INFO',
                 'NOTIFY_HEADER_END_PRODUCT_INFO',
                 'NOTIFY_HEADER_END_PRODUCT_MUSIC_INFO',
-
-                /* 'view_item_list' events */
-                'NOTIFY_HEADER_END_FEATURED_PRODUCTS',
-                'NOTIFY_HTML_HEAD_START',       //- for products_all and products_new, since they provide no notifications from their respective headers.
 
                 /* cart-related events */
                 'NOTIFIER_CART_RESTORE_CONTENTS_START',
@@ -324,6 +320,60 @@ class ga4_analytics extends base
                             break;
 
                         // -----
+                        // The "All Products", "New Products" and "Featured Products" pages
+                        // have their arrays of currently displayed products either in a
+                        // page-specific variable or, for sites that use a SNAF approach
+                        // (e.g. Bootstrap), in a common $listing variable.
+                        //
+                        case FILENAME_PRODUCTS_ALL:
+                            global $products_all, $listing;
+
+                            $products = isset($listing) ? $listing : $products_all;
+                            if (count($products) === 0) {
+                                break;
+                            }
+                            $_SESSION['ga4_analytics'][] = [
+                                'event' => 'view_item_list',
+                                'parameters' => [
+                                    'item_list_name' => GA4_ANALYTICS_ALL_PRODUCTS,
+                                    'items' => $this->getListingItems($products),
+                                ]
+                            ];
+                            break;
+
+                        case FILENAME_PRODUCTS_NEW:
+                            global $products_new, $listing;
+ 
+                            $products = isset($listing) ? $listing : $products_new;
+                            if (count($products) === 0) {
+                                break;
+                            }
+                            $_SESSION['ga4_analytics'][] = [
+                                'event' => 'view_item_list',
+                                'parameters' => [
+                                    'item_list_name' => GA4_ANALYTICS_NEW_PRODUCTS,
+                                    'items' => $this->getListingItems($products),
+                                ]
+                            ];
+                            break;
+
+                        case FILENAME_FEATURED_PRODUCTS:
+                            global $featured_products, $listing;
+
+                            $products = isset($listing) ? $listing : $featured_products;
+                            if (count($products) === 0) {
+                                break;
+                            }
+                            $_SESSION['ga4_analytics'][] = [
+                                'event' => 'view_item_list',
+                                'parameters' => [
+                                    'item_list_name' => GA4_ANALYTICS_FEATURED_PRODUCTS,
+                                    'items' => $this->getListingItems($featured_products),
+                                ]
+                            ];
+                            break;
+
+                        // -----
                         // The index products' listing doesn't get generated until the
                         // template renders, pulling in the /modules/products_listing.php
                         //
@@ -349,56 +399,6 @@ class ga4_analytics extends base
                 $ga4_measurement_type = ($this->isGtmAnalytics === true) ? 'GTM' : 'GA4';
                 $ga4_script_tag_required = true;
                 require $template->get_template_dir('ga4_analytics_events_script.php', DIR_WS_TEMPLATE, $current_page_base, 'jscript') . '/ga4_analytics_events_script.php';
-                break;
-
-            case 'NOTIFY_HEADER_END_FEATURED_PRODUCTS':
-                global $db, $featured_products_split;
-
-                $featured_products = $db->Execute($featured_products_split->sql_query);
-                if ($featured_products->EOF) {
-                    break;
-                }
-                $_SESSION['ga4_analytics'][] = [
-                    'event' => 'view_item_list',
-                    'parameters' => [
-                        'item_list_name' => GA4_ANALYTICS_FEATURED_PRODUCTS,
-                        'items' => $this->getListingItems($featured_products),
-                    ]
-                ];
-                break;
-
-            // -----
-            // The 'products_all' and 'products_new' listings provide no notification of their own.
-            // Use the template-based notification issued at the very start of a template's html_header.php
-            // to gather the required information.
-            //
-            case 'NOTIFY_HTML_HEAD_START':
-                global $db;
-                $item_list_name = false;
-                switch ($p1) {
-                    case FILENAME_PRODUCTS_ALL:
-                        global $products_all_split;
-                        $item_list_name = GA4_ANALYTICS_ALL_PRODUCTS;
-                        $listing = $db->Execute($products_all_split->sql_query);
-                        break;
-                    case FILENAME_PRODUCTS_NEW:
-                        global $products_new_split;
-                        $item_list_name = GA4_ANALYTICS_NEW_PRODUCTS;
-                        $listing = $db->Execute($products_new_split->sql_query);
-                        break;
-                    default:
-                        break;
-                }
-                if ($item_list_name === false || $listing->EOF) {
-                    break;
-                }
-                $_SESSION['ga4_analytics'][] = [
-                    'event' => 'view_item_list',
-                    'parameters' => [
-                        'item_list_name' => $item_list_name,
-                        'items' => $this->getListingItems($listing),
-                    ]
-                ];
                 break;
 
             // -----
