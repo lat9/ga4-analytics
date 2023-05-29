@@ -3,7 +3,7 @@
 // Part of the "GA4 Analytics" plugin, created by lat9 (https://vinosdefrutastropicales.com)
 // Copyright (c) 2022-2023, Vinos de Frutas Tropicales.
 //
-// Last updated: v1.2.1
+// Last updated: v1.2.2
 //
 // Based on:
 /**
@@ -306,8 +306,8 @@ class ga4_analytics extends base
                         case FILENAME_SPECIALS:
                             global $specials, $listing;
 
-                            $products = isset($listing) ? $listing : $specials;
-                            if (count($products) === 0) {
+                            $products = $listing ?? $specials ?? [];
+                            if (empty($products)) {
                                 break;
                             }
                             $_SESSION['ga4_analytics'][] = [
@@ -328,8 +328,8 @@ class ga4_analytics extends base
                         case FILENAME_PRODUCTS_ALL:
                             global $products_all, $listing;
 
-                            $products = isset($listing) ? $listing : $products_all;
-                            if (count($products) === 0) {
+                            $products = $listing ?? $products_all ?? [];
+                            if (empty($products)) {
                                 break;
                             }
                             $_SESSION['ga4_analytics'][] = [
@@ -344,8 +344,8 @@ class ga4_analytics extends base
                         case FILENAME_PRODUCTS_NEW:
                             global $products_new, $listing;
  
-                            $products = isset($listing) ? $listing : $products_new;
-                            if (count($products) === 0) {
+                            $products = $listing ?? $products_new ?? [];
+                            if (empty($products)) {
                                 break;
                             }
                             $_SESSION['ga4_analytics'][] = [
@@ -360,15 +360,15 @@ class ga4_analytics extends base
                         case FILENAME_FEATURED_PRODUCTS:
                             global $featured_products, $listing;
 
-                            $products = isset($listing) ? $listing : $featured_products;
-                            if (count($products) === 0) {
+                            $products = $listing ?? $featured_products ?? [];
+                            if (empty($products)) {
                                 break;
                             }
                             $_SESSION['ga4_analytics'][] = [
                                 'event' => 'view_item_list',
                                 'parameters' => [
                                     'item_list_name' => GA4_ANALYTICS_FEATURED_PRODUCTS,
-                                    'items' => $this->getListingItems($featured_products),
+                                    'items' => $this->getListingItems($products),
                                 ]
                             ];
                             break;
