@@ -580,8 +580,9 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
     <p>These sections identify the GA4 Analytics changes as well as the change-history associated with the EC Analytics plugin, on which it's based.</p>
     <h3>GA4 Analytics Version History</h3>
     <ul>
-        <li>v1.2.2, 2023-05-29 (lat9)<ul>
+        <li>v1.2.2, 2023-08-21 (lat9)<ul>
             <li>BUGFIX: Correct PHP warning on featured-products' page.</li>
+            <li>BUGFIX: Correct PHP warning when a product has no price, e.g. <var>call_for_price</var> or <var>document_general</var> products.</li>
             <li>The following files were changed or <span class="removed">removed</span>:<ol>
                 <li>/includes/classes/observers/class.ga4_analytics.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_ga4_analytics_admin.php</li>

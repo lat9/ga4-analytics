@@ -244,16 +244,30 @@ class ga4_analytics extends base
                         }
                     }
 
-                    $_SESSION['ga4_analytics'][] = [
-                        'event' => 'view_item',
-                        'parameters' => [
-                            'currency' => $_SESSION['currency'],
-                            'value' => $item['price'],
-                            'items' => [
-                                $item,
-                            ]
-                        ],
-                    ];
+                    // -----
+                    // No pricing is provided for call-for-price or document_general products.
+                    //
+                    if (!isset($item['price'])) {
+                        $_SESSION['ga4_analytics'][] = [
+                            'event' => 'view_item',
+                            'parameters' => [
+                                'items' => [
+                                    $item,
+                                ]
+                            ],
+                        ];
+                    } else {
+                        $_SESSION['ga4_analytics'][] = [
+                            'event' => 'view_item',
+                            'parameters' => [
+                                'currency' => $_SESSION['currency'],
+                                'value' => $item['price'],
+                                'items' => [
+                                    $item,
+                                ]
+                            ],
+                        ];
+                    }
                 } else {
                     switch ($current_page_base) {
                         // -----
