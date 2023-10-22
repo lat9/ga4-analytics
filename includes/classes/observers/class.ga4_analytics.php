@@ -3,7 +3,7 @@
 // Part of the "GA4 Analytics" plugin, created by lat9 (https://vinosdefrutastropicales.com)
 // Copyright (c) 2022-2023, Vinos de Frutas Tropicales.
 //
-// Last updated: v1.2.2
+// Last updated: v1.2.3
 //
 // Based on:
 /**
@@ -285,7 +285,7 @@ class ga4_analytics extends base
                             global $order;
 
                             $checkout_parameters = $this->getCheckoutParameters();
-                            $came_from_confirmation_page = (strpos($_SERVER['HTTP_REFERER'], zen_href_link(FILENAME_CHECKOUT_CONFIRMATION, '', 'SSL')) === 0);
+                            $came_from_confirmation_page = (isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], zen_href_link(FILENAME_CHECKOUT_CONFIRMATION, '', 'SSL')) === 0);
                             if ($_SESSION['cart']->get_content_type() === 'virtual' && $came_from_confirmation_page === false) {
                                 $_SESSION['ga4_analytics'][] = [
                                     'event' => 'begin_checkout',
@@ -302,7 +302,7 @@ class ga4_analytics extends base
                             break;
 
                         case FILENAME_CHECKOUT_CONFIRMATION:
-                            if (strpos($_SERVER['HTTP_REFERER'], zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL')) === 0) {
+                            if (isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL')) === 0) {
                                 $checkout_parameters = $this->getCheckoutParameters();
                                 $checkout_parameters['payment_type'] = $_SESSION['payment'];
                                 $_SESSION['ga4_analytics'][] = [
