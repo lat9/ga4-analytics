@@ -80,13 +80,18 @@ if ($ga4_measurement_type === 'GA4') {
     //
     // Also push any site-specific 'global' parameters defined.
     //
-    foreach ($ga4_config_parameters as $key => $value) {
+    if (count($ga4_config_parameters) !== 0) {
+        $gtm_parameters = '';
+        foreach ($ga4_config_parameters as $key => $value) {
+            $gtm_parameters .= "'" . $key . "': '" . $value . "', ";
+        }
 ?>
     dataLayer.push({
-        '<?php echo $key; ?>': '<?php echo $value; ?>'
+        <?php echo rtrim($gtm_parameters, ', '); ?>
     });
 <?php
     }
+
     // -----
     // If any session-based events are waiting to be pushed to the dataLayer, push them now.
     //

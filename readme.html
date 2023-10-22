@@ -583,9 +583,11 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
         <li>v1.2.3-beta1, 2023-10-21 (lat9)<ul>
             <li>BUGFIX: Load the GA4 class <b>absolutely</b> after the currencies have been instantiated.</li>
             <li>BUGFIX: <var>$_SERVER['HTTP_REFERER']</var> might not be set on checkout payment/confirmation, generating logs.</li>
+            <li>BUGFIX: Use a single <var>dataLayer.push</var> for <em>all</em> GA4 configuration parameters.</li>
             <li>The following files were changed:<ol>
                 <li>/includes/auto_loaders/config.ga4_analytics.php</li>
                 <li>/includes/classes/observers/class.ga4_analytics.php</li>
+                <li>/includes/templates/template_default/jscript/ga4_analytics_start_script.php</li>
                 <li>/YOUR_ADMIN/includes/init_includes/init_ga4_analytics_admin.php</li>
             </ol></li>
         </ul></li>
