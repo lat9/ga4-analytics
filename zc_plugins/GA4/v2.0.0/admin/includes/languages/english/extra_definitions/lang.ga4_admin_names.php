@@ -3,7 +3,9 @@
 // Part of the GA4 Analytics plugin, created by lat9 (https://vinosdefrutastropicales.com)
 // Copyright (c) 2022, Vinos de Frutas Tropicales.
 //
-$autoLoadConfig[200][] = [
-    'autoType' => 'init_script',
-    'loadFile' => 'init_ga4_analytics_admin.php'
+// Last updated: v1.0.1
+//
+
+return [
+    'BOX_GA4_ANALYTICS_NAME' => 'GA4 Analytics Settings',
 ];

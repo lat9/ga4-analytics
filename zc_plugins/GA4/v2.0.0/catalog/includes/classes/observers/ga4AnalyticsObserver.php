@@ -14,7 +14,7 @@
  * @license http://www.zen-cart-pro.at/license/2_0.txt GNU Public License V2.0
  * @version $Id: class.ec_analytics.php 2017-12-11  DrByte $
  */
-class ga4_analytics extends base
+class ga4AnalyticsObserver extends base
 {
     protected
         $isConfigured = false,      //- Indicates whether or not the plugin is configured.
@@ -101,7 +101,7 @@ class ga4_analytics extends base
                 'NOTIFIER_CART_RESTORE_CONTENTS_START',
                 'NOTIFIER_CART_RESTORE_CONTENTS_END',
                 'NOTIFIER_CART_ADD_CART_START',
-                'NOTIFIER_CART_ADD_CART_END', 
+                'NOTIFIER_CART_ADD_CART_END',
                 'NOTIFIER_CART_REMOVE_START',
                 'NOTIFIER_CART_REMOVE_ALL_START',
                 'NOTIFY_HEADER_END_SHOPPING_CART',
@@ -167,7 +167,7 @@ class ga4_analytics extends base
                 $this->initialized = true;
                 $ga4_measurement_id = $this->measurement_id;
                 $ga4_measurement_type = ($this->isGtmAnalytics === true) ? 'GTM' : 'GA4';
-                require $template->get_template_dir('ga4_analytics_start_script.php', DIR_WS_TEMPLATE, $current_page_base, 'jscript') . '/ga4_analytics_start_script.php';
+                require $this->getZcPluginDir() . DIR_WS_TEMPLATES . 'jscript/ga4_analytics_start_script.php';
                 break;
 
             // -----
@@ -215,7 +215,7 @@ class ga4_analytics extends base
                         global $db;
 
                         $products_id = isset($_REQUEST['products_id']) ? (int)$_REQUEST['products_id'] : 0;
-                        $sql = 
+                        $sql =
                             "SELECT p.*, pd.*, pt.allow_add_to_cart, pt.type_handler
                                FROM " . TABLE_PRODUCTS . " p
                                     LEFT JOIN " . TABLE_PRODUCT_TYPES . " pt
@@ -357,7 +357,7 @@ class ga4_analytics extends base
 
                         case FILENAME_PRODUCTS_NEW:
                             global $products_new, $listing;
- 
+
                             $products = $listing ?? $products_new ?? [];
                             if (empty($products)) {
                                 break;
@@ -412,7 +412,7 @@ class ga4_analytics extends base
 
                 $ga4_measurement_type = ($this->isGtmAnalytics === true) ? 'GTM' : 'GA4';
                 $ga4_script_tag_required = true;
-                require $template->get_template_dir('ga4_analytics_events_script.php', DIR_WS_TEMPLATE, $current_page_base, 'jscript') . '/ga4_analytics_events_script.php';
+                require $this->getZcPluginDir() . DIR_WS_TEMPLATES . 'jscript/ga4_analytics_events_script.php';
                 break;
 
             // -----
@@ -738,7 +738,7 @@ class ga4_analytics extends base
         }
         return $item;
     }
-    
+
     // -----
     // Essentially, mimicing the processing for zen_get_products_display_price.
     //
@@ -1074,5 +1074,13 @@ class ga4_analytics extends base
             }
         }
         return (count($items) === 0) ? false : $items;
+    }
+    /**
+     * Return the plugin's currently-installed zc_plugin directory for the catalog.
+     */
+    public function getZcPluginDir(): string
+    {
+        $dir = __DIR__ . '/../../../../';
+        return realpath($dir) . '/catalog/';
     }
 }

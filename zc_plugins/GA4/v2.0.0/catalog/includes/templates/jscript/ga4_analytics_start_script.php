@@ -1,4 +1,4 @@
-<?php 
+<?php
 // -----
 // Part of the "GA4 Analytics" plugin, created by lat9 (https://vinosdefrutastropicales.com)
 // Copyright (c) 2022-2023, Vinos de Frutas Tropicales.
@@ -49,12 +49,6 @@ if ($ga4_measurement_type === 'GA4') {
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
 <?php
-    if (defined('GA4_ANALYTICS_TRACKING_ID_UA') && strpos(GA4_ANALYTICS_TRACKING_ID_UA, 'UA-') === 0) {
-?>
-    gtag('config', '<?php echo GA4_ANALYTICS_TRACKING_ID_UA; ?>');
-<?php
-    }
-
     $ga4_json_parameters = '';
     if ($ga4_config_parameters !== []) {
         $ga4_json_parameters = ', ' . json_encode($ga4_config_parameters);
