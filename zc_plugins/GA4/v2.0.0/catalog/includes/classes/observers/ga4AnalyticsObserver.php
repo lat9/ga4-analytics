@@ -115,6 +115,9 @@ class ga4AnalyticsObserver extends base
 
                 /* search event */
                 'NOTIFY_HEADER_END_ADVANCED_SEARCH_RESULTS',
+
+                /* load subtemplate to output added events to dataLayer */
+                'NOTIFY_GA4_CALL_EVENT_OUTPUT',
             ]
         );
     }
@@ -412,6 +415,7 @@ class ga4AnalyticsObserver extends base
 
                 $ga4_measurement_type = ($this->isGtmAnalytics === true) ? 'GTM' : 'GA4';
                 $ga4_script_tag_required = true;
+                $ga4_analytics = $this;
                 require $this->getZcPluginDir() . DIR_WS_TEMPLATES . 'jscript/ga4_analytics_events_script.php';
                 break;
 
@@ -639,6 +643,18 @@ class ga4AnalyticsObserver extends base
                         'search_term' => $p1,
                     ]
                 ];
+                break;
+
+            case 'NOTIFY_GA4_CALL_EVENT_OUTPUT':
+                // -----
+                // If any session-based events are waiting to be pushed to the dataLayer, push them now.
+                //
+                if (!empty($_SESSION['ga4_analytics'])) {
+                    $ga4_measurement_type = ($this->isGtmAnalytics === true) ? 'GTM' : 'GA4';
+                    $ga4_script_tag_required = false;
+                    $ga4_analytics = $this;
+                    require $this->getZcPluginDir() . DIR_WS_TEMPLATES . 'jscript/ga4_analytics_events_script.php';
+                }
                 break;
 
             default:

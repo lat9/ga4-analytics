@@ -86,13 +86,8 @@ if ($ga4_measurement_type === 'GA4') {
 <?php
     }
 
-    // -----
-    // If any session-based events are waiting to be pushed to the dataLayer, push them now.
-    //
-    if (!empty($_SESSION['ga4_analytics'])) {
-        $ga4_script_tag_required = false;
-        require $template->get_template_dir('ga4_analytics_events_script.php', DIR_WS_TEMPLATE, $current_page_base, 'jscript') . '/ga4_analytics_events_script.php';
-    }
+    $zco_notifier->notify('NOTIFY_GA4_CALL_EVENT_OUTPUT');
+
 ?>
     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],

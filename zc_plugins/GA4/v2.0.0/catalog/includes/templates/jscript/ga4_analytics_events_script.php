@@ -1,4 +1,4 @@
-<?php 
+<?php
 // -----
 // Part of the "GA4 Analytics" plugin, created by lat9 (https://vinosdefrutastropicales.com)
 // Copyright (c) 2022-2023, Vinos de Frutas Tropicales.
@@ -98,7 +98,7 @@ if ($ga4_measurement_type === 'GA4') {
     //
     // Re-format the collected events for use in the dataLayer.push for GTM.
     //
-    global $ga4_analytics;
+    /** @var ga4AnalyticsObserver $ga4_analytics */
 
     $gtm_events = [];
     $found_add_to_cart_event = false;
