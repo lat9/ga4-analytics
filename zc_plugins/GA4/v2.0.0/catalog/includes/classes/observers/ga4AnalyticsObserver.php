@@ -170,7 +170,7 @@ class ga4AnalyticsObserver extends base
                 $this->initialized = true;
                 $ga4_measurement_id = $this->measurement_id;
                 $ga4_measurement_type = ($this->isGtmAnalytics === true) ? 'GTM' : 'GA4';
-                require $this->getZcPluginDir() . DIR_WS_TEMPLATES . 'jscript/ga4_analytics_start_script.php';
+                require $this->getZcPluginDir() . DIR_WS_TEMPLATES . 'default/jscript/ga4_analytics_start_script.php';
                 break;
 
             // -----
@@ -416,7 +416,7 @@ class ga4AnalyticsObserver extends base
                 $ga4_measurement_type = ($this->isGtmAnalytics === true) ? 'GTM' : 'GA4';
                 $ga4_script_tag_required = true;
                 $ga4_analytics = $this;
-                require $this->getZcPluginDir() . DIR_WS_TEMPLATES . 'jscript/ga4_analytics_events_script.php';
+                require $this->getZcPluginDir() . DIR_WS_TEMPLATES . 'default/jscript/ga4_analytics_events_script.php';
                 break;
 
             // -----
@@ -653,7 +653,7 @@ class ga4AnalyticsObserver extends base
                     $ga4_measurement_type = ($this->isGtmAnalytics === true) ? 'GTM' : 'GA4';
                     $ga4_script_tag_required = false;
                     $ga4_analytics = $this;
-                    require $this->getZcPluginDir() . DIR_WS_TEMPLATES . 'jscript/ga4_analytics_events_script.php';
+                    require $this->getZcPluginDir() . DIR_WS_TEMPLATES . 'default/jscript/ga4_analytics_events_script.php';
                 }
                 break;
 
