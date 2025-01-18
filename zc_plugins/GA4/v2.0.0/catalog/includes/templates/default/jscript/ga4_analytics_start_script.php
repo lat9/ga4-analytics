@@ -1,4 +1,4 @@
-<?php 
+<?php
 // -----
 // Part of the "GA4 Analytics" plugin, created by lat9 (https://vinosdefrutastropicales.com)
 // Copyright (c) 2022-2023, Vinos de Frutas Tropicales.
@@ -49,12 +49,6 @@ if ($ga4_measurement_type === 'GA4') {
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
 <?php
-    if (defined('GA4_ANALYTICS_TRACKING_ID_UA') && strpos(GA4_ANALYTICS_TRACKING_ID_UA, 'UA-') === 0) {
-?>
-    gtag('config', '<?php echo GA4_ANALYTICS_TRACKING_ID_UA; ?>');
-<?php
-    }
-
     $ga4_json_parameters = '';
     if ($ga4_config_parameters !== []) {
         $ga4_json_parameters = ', ' . json_encode($ga4_config_parameters);
@@ -92,13 +86,8 @@ if ($ga4_measurement_type === 'GA4') {
 <?php
     }
 
-    // -----
-    // If any session-based events are waiting to be pushed to the dataLayer, push them now.
-    //
-    if (!empty($_SESSION['ga4_analytics'])) {
-        $ga4_script_tag_required = false;
-        require $template->get_template_dir('ga4_analytics_events_script.php', DIR_WS_TEMPLATE, $current_page_base, 'jscript') . '/ga4_analytics_events_script.php';
-    }
+    $zco_notifier->notify('NOTIFY_GA4_CALL_EVENT_OUTPUT');
+
 ?>
     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],

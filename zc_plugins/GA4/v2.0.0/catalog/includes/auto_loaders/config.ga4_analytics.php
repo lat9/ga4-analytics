@@ -16,10 +16,10 @@
 */
 $autoLoadConfig[121][] = [
     'autoType' => 'class',
-    'loadFile' => 'observers/class.ga4_analytics.php'
+    'loadFile' => 'observers/ga4AnalyticsObserver.php'
 ];
 $autoLoadConfig[121][] = [
     'autoType' => 'classInstantiate',
-    'className' => 'ga4_analytics',
-    'objectName' => 'ga4_analytics'
+    'className' => 'ga4AnalyticsObserver',
+    'objectName' => 'ga4Analytics'
 ];

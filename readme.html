@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GA4 Analytics for Zen Cart 1.5.6b and Later</title>
+<title>GA4 Analytics for Zen Cart 2.1.0 and Later</title>
 <style>
 a, a:active,
 a:visited {
@@ -29,22 +29,22 @@ td {
 pre {
     margin: 20px;
 }
-h1, 
-h2, 
-h3, 
-h4 { 
+h1,
+h2,
+h3,
+h4 {
     font-weight: bold
 }
-h1 { 
+h1 {
     font-size: 20px;
 }
-h2 { 
+h2 {
     font-size: 16px;
     border-top: 1px solid black;
     padding-top: 5px;
 }
 ol li,
-ul li { 
+ul li {
     margin: 5px 0;
 }
 .corefile,
@@ -90,8 +90,8 @@ table table {
 </head>
 
 <body>
-    <h1>GA4 Analytics for Zen Cart v1.5.6b and later, including v1.5.8a and 2.0.0</h1>
-    <h3>Version 1.2.4</h3>
+    <h1>GA4 Analytics for Zen Cart v2.1.0 and later</h1>
+    <h3>Version 2.0.0</h3>
     <p>Current Support Thread at Zen Cart Forums: <a href="https://www.zen-cart.com/showthread.php?229367-GA-4-Analytics-Support-Thread" target="_blank">https://www.zen-cart.com/showthread.php?229367-GA-4-Analytics-Support-Thread</a></p>
     <p>Zen Cart Download Link: <a href="https://www.zen-cart.com/downloads.php?do=file&id=2368" target="_blank">https://www.zen-cart.com/downloads.php?do=file&id=2368</a></p>
     <p>GitHub repository: <a href="https://github.com/lat9/ga4-analytics" target="_blank">https://github.com/lat9/ga4-analytics</a></p>
@@ -113,44 +113,18 @@ table table {
 
     <h2>Purpose</h2>
     <p>This module utilizes the <em>Google Analytics 4</em> API, based on that API's documentation as of December 2022. It records all of your store sales data for viewing from your Google Analytics Account (which must be created before installing this module).  You'll need to create your site's &quot;GA4 Measuring ID&quot; (e.g. <code>G-xxxxxxxx</code>) before the plugin will start its measurements.  Refer to <a href="https://support.google.com/analytics/answer/10089681?utm_source=developers.google.com&utm_medium=referral" target="_blank">this</a> GA4 documentation link for additional information.</p>
-    <p>Starting with v1.2.0 of <em>GA-4 Analytics</em>, you can also use your Google Tag Manager Measurement ID; you'll need to connect your <code>GTM-</code> ID to any <code>G-</code> ID to use the GA-4 dataLayer pushes.</p>
+    <p>You can also use your Google Tag Manager Measurement ID; you'll need to connect your <code>GTM-</code> ID to any <code>G-</code> ID to use the GA-4 dataLayer pushes.</p>
 
     <h2>Installation and Upgrade</h2>
     <p><b>Before you start &hellip;</b></p>
     <ol>
-        <li>Edit your current template's version of <code>/common/html_header.php</code> and add a notification that <em>GA4 Analytics</em> requires to insert the load of the <code>gtag.js</code> module, right after the &lt;head&gt; tag:<pre>
-  &lt;head&gt;
-&lt;?php
-// -----
-// Provide a notification that the &lt;head&gt; tag has been rendered for the current page.
-//
-$zco_notifier-&gt;notify('NOTIFY_HTML_HEAD_TAG_START', $current_page_base);
-?&gt;
-        </pre></li>
-        <li>Ensure that your current template's version of <code>/common/tpl_main_page.php</code> contains the following notification, prior to the &lt;/body&gt; tag.  It's OK if that notification is present in the page's &quot;mainWrapper&quot; <code>div</code>:<pre>
-&lt;?php /* add any end-of-page code via an observer class */
-$zco_notifier-&gt;notify('NOTIFY_FOOTER_END', $current_page);
-?&gt;
-        </pre></li>
-        <li><b>If your store runs on Zen Cart 1.5.6b or 1.5.6c</b>, you'll need to edit your version of <code>/includes/classes/shopping_cart.php</code>.  Find the <b>NOTIFIER_CART_ADD_CART_END</b> notification and change it to add the parameters that were added in Zen Cart 1.5.7:<pre>
-$this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $attributes, $notify</b>);
-        </pre></li>
+        <li>Remove all older versions of this plugin, and any other Google Analytics or Google Tracking or Adwords Conversion Tracking plugins or code alterations, whether in PHP or Javscript Snippets in your template.</li>
     </ol>
     <ol>
-        <li>Unzip this distribution's zip-file; you'll see the following files and directories:<ol type="a">
-            <li>/includes/auto_loaders/config.ga4_analytics.php</li>
-            <li>/includes/classes/observers/class.ga4_analytics.php</li>
-            <li><span class="removed">/includes/extra_cart_actions/ga4_analytics_actions.php</span> <span class="smaller">(Removed in v1.2.0)</span></li>
-            <li>/includes/languages/english/extra_definitions/ga4_analytics_extra_definitions.php</li>
-            <li>/includes/templates/template_default/jscript/ga4_analytics_events_script.php</li>
-            <li>/includes/templates/template_default/jscript/ga4_analytics_start_script.php</li>
-            <li>/YOUR_ADMIN/includes/auto_loaders/config.ga4_analytics_admin.php</li>
-            <li>/YOUR_ADMIN/includes/init_includes/init_ga4_analytics_admin.php</li>
-            <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/ga4_analytics_admin_names.php</li>
-        </ol></li>
-        <li>Rename the <code>YOUR_ADMIN</code> sub-directory to match your site's Zen Cart admin directory.</li>
-        <li>Copy the plugin's files to your site's file-system.</li>
-        <li>Log into your Zen Cart admin and the plugin will perform its auto-install procedure.</li>
+    <ol>
+        <li>Unzip this distribution's zip-file; you'll see a "zc_plugins" directory, and inside it a "GA4" directory, and inside that another directory with a version number.</li>
+        <li>Copy the plugin's <code>GA4</code> directory to your site's file-system's `zc_plugins` directory.</li>
+        <li>Log into your Zen Cart admin and go to Modules &gt; Plugin Manager. Click on <code>Google Analytics GA4</code>, and click Install, and confirm by clicking Install.</li>
         <li>You'll see a <em>GA4 Analytics Settings</em> element under the admin's <em>Configuration</em> tab; proceed to the configuration step, see below.</li>
     </ol>
 
@@ -174,11 +148,6 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
                 <td>GA4 Analytics Measuring ID</td>
                 <td>>Enter either the GA4 Analytics <em>Measuring ID</em> or the Google Tag Manager <em>container ID</em> provided to you when you registered your site with google. The GA4 ID starts with <code>G-</code> while the GTM ID starts with <code>GTM-</code>.  Set this value to an empty string (the default) to disable the <em>GA4 Analytics</em> plugin.</td>
                 <td class="text-center">&mdash;</td>
-            </tr>
-            <tr>
-                <td>Universal Analytics Tracking ID</td>
-                <td>If you want to enable &quot;dual tagging&quot; to keep your <em>Universal Analytics</em> implementation in place while you build out your Google Analytics 4 implementation, enter that tracking ID here.  That ID will start with <code>UA-</code>.  If this value starts with <code>UA-</code>, an additional <code>gtag</code> configuration event will be set at the start of each page load, so long as the main GA4 Analytics module is enabled.  See this <a href="https://support.google.com/analytics/answer/11091026" target="_blank">Google documentation</a> for more information.</td>
-                <td class="text-center">v1.0.1</td>
             </tr>
             <tr id="variant-separator">
                 <td>Product Variants' Separator</td>
@@ -580,6 +549,12 @@ $this-&gt;notify('NOTIFIER_CART_ADD_CART_END'<b>, array(), $products_id, $qty, $
     <p>These sections identify the GA4 Analytics changes as well as the change-history associated with the EC Analytics plugin, on which it's based.</p>
     <h3>GA4 Analytics Version History</h3>
     <ul>
+        <li>v2.0.0, 2024-09 (lat9, DrByte)<ul>
+        <li>Retired dual-tagging support for Universal Analytics (UA- codes) since Google no longer supports UA.</li>
+        <li>All files are converted to an Encapsulated Plugin, now located under zc_plugins<ol>
+            <li>Therefore you should remove from your server the files related to all previous versions before using this version.</li>
+        </ol></li>
+        </ul></li>
         <li>v1.2.4, 2024-04-05 (lat9, proseLA)<ul>
         <li>BUGFIX: Don't include empty category-names in a product's categories' list.</li>
         <li>The following files were changed:<ol>
