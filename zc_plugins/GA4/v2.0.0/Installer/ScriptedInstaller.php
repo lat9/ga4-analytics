@@ -97,8 +97,8 @@ class ScriptedInstaller extends ScriptedInstallBase
         ];
 
         $errorOccurred = false;
-        foreach($filesToDelete as $key => $nextFile) {
-            if(file_exists($nextFile)) {
+        foreach ($filesToDelete as $key => $nextFile) {
+            if (file_exists($nextFile)) {
                 $result = unlink($nextFile);
                 if (!$result && file_exists($nextFile)) {
                     $errorOccurred = true;

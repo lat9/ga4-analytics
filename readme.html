@@ -106,7 +106,7 @@ table table {
         <li>If you are using Adwords campaigns make sure that your Google Analytics account is linked with your Google Adwords account.</li>
     </ul>
     <p>If your site currently uses &quot;Google Tag Manager&quot;, you neither need nor want to use this plugin as you can configure the GTM-to-GA4 connection via your Google Management console.  That functionality is <b>outside the support</b> of this plugin!</p>
-    <p><b>Note:</b> The initial version of this plugin <em>does not <b>fully</b> support</em> <a href="https://www.zen-cart.com/downloads.php?do=file&id=2095" target="_blank">One-Page Checkout</a>.  Specifically, the <a href="#checkout">checkout-related</a> <code>add_shipping_info</code> and <code>add_payment_info</code> events will not be reported.  The <code>purchase</code> events will be reported regardless of the checkout processing your store uses.</p>
+    <p><b>Note:</b> This plugin <em>does not <b>fully</b> support</em> <a href="https://www.zen-cart.com/downloads.php?do=file&id=2095" target="_blank">One-Page Checkout</a>.  Specifically, the <a href="#checkout">checkout-related</a> <code>add_shipping_info</code> and <code>add_payment_info</code> events will not be reported.  The <code>purchase</code> events will be reported regardless of the checkout processing your store uses.</p>
 
     <h2>Credits</h2>
     <p>This plugin is based on the <a href="https://www.zen-cart.com/downloads.php?do=file&id=1997" target="_blank">EC Analytics</a> Zen Cart plugin, provided by @RodG and @webchills.</p>
@@ -117,14 +117,23 @@ table table {
 
     <h2>Installation and Upgrade</h2>
     <p><b>Before you start &hellip;</b></p>
+    <p>Remove older versions of this plugin (see the file list below) and/or any other Google Analytics or Google Tracking or Adwords Conversion Tracking plugins or code alterations, whether in PHP or Javascript Snippets in your template.</p>
+    <p id="removed-files"><b>Note:</b> These files are <em>automatically removed</em> when v2.0.0 or later of this plugin is installed:</p>
     <ol>
-        <li>Remove all older versions of this plugin, and any other Google Analytics or Google Tracking or Adwords Conversion Tracking plugins or code alterations, whether in PHP or Javscript Snippets in your template.</li>
+        <li>/includes/auto_loaders/config.ga4_analytics.php</li>
+        <li>/includes/classes/observers/class.ga4_analytics.php</li>
+        <li>/includes/languages/english/extra_definitions/ga4_analytics_extra_definitions.php</li>
+        <li>/includes/templates/template_default/jscript/ga4_analytics_events_script.php</li>
+        <li>/includes/templates/template_default/jscript/ga4_analytics_start_script.php</li>
+        <li>/YOUR_ADMIN/includes/auto_loaders/config.ga4_analytics_admin.php</li>
+        <li>/YOUR_ADMIN/includes/init_includes/init_ga4_analytics_admin.php</li>
+        <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/ga4_analytics_admin_names.php</li>
     </ol>
+    <p><b>&hellip; then &hellip;</b></p>
     <ol>
-    <ol>
-        <li>Unzip this distribution's zip-file; you'll see a "zc_plugins" directory, and inside it a "GA4" directory, and inside that another directory with a version number.</li>
-        <li>Copy the plugin's <code>GA4</code> directory to your site's file-system's `zc_plugins` directory.</li>
-        <li>Log into your Zen Cart admin and go to Modules &gt; Plugin Manager. Click on <code>Google Analytics GA4</code>, and click Install, and confirm by clicking Install.</li>
+        <li>Unzip this distribution's zip-file; you'll see a <code>zc_plugins</code> directory, and inside it a <code>GA4</code> directory, and inside that another directory with a version number.</li>
+        <li>Copy the plugin's <code>GA4</code> directory to your site's file-system's <code>zc_plugins</code> directory.</li>
+        <li>Log into your Zen Cart admin and go to <em>Modules :: Plugin Manager</em>. Click on <code>Google Analytics GA4</code>, and click Install, and confirm by clicking Install.</li>
         <li>You'll see a <em>GA4 Analytics Settings</em> element under the admin's <em>Configuration</em> tab; proceed to the configuration step, see below.</li>
     </ol>
 
@@ -549,18 +558,16 @@ table table {
     <p>These sections identify the GA4 Analytics changes as well as the change-history associated with the EC Analytics plugin, on which it's based.</p>
     <h3>GA4 Analytics Version History</h3>
     <ul>
-        <li>v2.0.0, 2024-09 (lat9, DrByte)<ul>
-        <li>Retired dual-tagging support for Universal Analytics (UA- codes) since Google no longer supports UA.</li>
-        <li>All files are converted to an Encapsulated Plugin, now located under zc_plugins<ol>
-            <li>Therefore you should remove from your server the files related to all previous versions before using this version.</li>
-        </ol></li>
+        <li>v2.0.0, 2025-01-18 (lat9, DrByte)<ul>
+            <li>Retired dual-tagging support for Universal Analytics (UA- codes) since Google no longer supports UA.</li>
+            <li>All files are converted to an Encapsulated Plugin, now located under zc_plugins. Any files associated with the non-encapsulated version of the plugin are <a href="#files-removed">automatically removed</a> when this version is installed.</li>
         </ul></li>
         <li>v1.2.4, 2024-04-05 (lat9, proseLA)<ul>
-        <li>BUGFIX: Don't include empty category-names in a product's categories' list.</li>
-        <li>The following files were changed:<ol>
-            <li>/includes/classes/observers/class.ga4_analytics.php</li>
-            <li>/YOUR_ADMIN/includes/init_includes/init_ga4_analytics_admin.php</li>
-        </ol></li>
+            <li>BUGFIX: Don't include empty category-names in a product's categories' list.</li>
+            <li>The following files were changed:<ol>
+                <li>/includes/classes/observers/class.ga4_analytics.php</li>
+                <li>/YOUR_ADMIN/includes/init_includes/init_ga4_analytics_admin.php</li>
+            </ol></li>
         </ul></li>
         <li>v1.2.3, 2023-10-22 (lat9)<ul>
             <li>BUGFIX: Load the GA4 class <b>absolutely</b> after the currencies have been instantiated.</li>
