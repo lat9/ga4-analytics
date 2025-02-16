@@ -738,7 +738,7 @@ class ga4AnalyticsObserver extends base
     {
         $products_id = $product['products_id'];
         $item = [
-            'item_name' => $product['products_name'],
+            'item_name' => $product['products_name'] ?? "Unknown ($products_id)",
         ];
         $item_price = $this->getItemPrice($products_id);
         if ($item_price !== false) {

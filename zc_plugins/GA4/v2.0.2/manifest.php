@@ -1,6 +1,6 @@
 <?php
 return [
-    'pluginVersion' => 'v2.0.1',
+    'pluginVersion' => 'v2.0.2',
     'pluginName' => "Google Analytics GA4",
     'pluginDescription' => 'Link to Google Analytics 4 for reporting',
     'pluginAuthor' => 'lat9',
