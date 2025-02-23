@@ -1,9 +1,9 @@
 <?php
 // -----
 // Part of the "GA4 Analytics" plugin, created by lat9 (https://vinosdefrutastropicales.com)
-// Copyright (c) 2022-2024, Vinos de Frutas Tropicales.
+// Copyright (c) 2022-2025, Vinos de Frutas Tropicales.
 //
-// Last updated: v1.2.4
+// Last updated: v2.0.2
 //
 // Based on:
 /**
