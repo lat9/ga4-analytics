@@ -233,7 +233,7 @@ class ga4AnalyticsObserver extends base
                             'item_name' => "Unknown ($products_id)",
                         ];
                     } else {
-                        $product = $product_info->fields;
+                        $product = array_merge($product_info->fields, $product_info->lang[$_SESSION['languages_code']] ?? []);
                         $products_id = $product['products_id'];
                         $item = $this->getItemInfo($product);
                     }
