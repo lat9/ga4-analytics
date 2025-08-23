@@ -1,4 +1,4 @@
-# Zen Cart GA4 Analytics, v2.0.1
+# Zen Cart GA4 Analytics, v2.0.2
 This encapsulated plugin provides GA4 analytics for Zen Cart stores running zc210 or later, based on the [EC Analytics](https://www.zen-cart.com/downloads.php?do=file&id=1997) plugin provided by RodG and webchills.
 
 Refer to the [readme.html](https://htmlpreview.github.io/?https://github.com/lat9/ga4-analytics/blob/ga4-main/readme.html) in this GitHub repository for additional details.
