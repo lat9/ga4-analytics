@@ -80,6 +80,7 @@ class ScriptedInstaller extends ScriptedInstallBase
             zen_register_admin_page('configGA4Analytics', 'BOX_GA4_ANALYTICS_NAME', 'FILENAME_CONFIGURATION', "gID=$this->configurationGroupId", 'configuration', 'Y');
         }
 
+        parent::executeInstall();
         return true;
     }
 
@@ -97,6 +98,7 @@ class ScriptedInstaller extends ScriptedInstallBase
               WHERE configuration_key = 'GA4_ANALYTICS_VERSION'
               LIMIT 1"
         );
+        parent::executeUpgrade($oldVersion);
     }
 
     /**
@@ -106,6 +108,7 @@ class ScriptedInstaller extends ScriptedInstallBase
     {
         zen_deregister_admin_pages('configGA4Analytics');
         $this->deleteConfigurationGroup($this->configGroupTitle, true);
+        parent::executeUninstall();
         return true;
     }
 
