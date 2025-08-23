@@ -5,7 +5,7 @@ class ScriptedInstaller extends ScriptedInstallBase
 {
     protected string $configGroupTitle = 'GA4 Analytics';
 
-    public const GA4_ANALYTICS_CURRENT_VERSION = '2.0.1';
+    public const GA4_ANALYTICS_CURRENT_VERSION = '2.0.2';
 
     protected int $configurationGroupId;
 
